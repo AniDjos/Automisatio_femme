@@ -21,6 +21,7 @@ class DashboardController extends Controller
 
     public function index()
     {
+
         $groupements = DB::table('groupement')->get();
         $appuis = DB::table('appuis')->get();
         $equipements = DB::table('equipement')->get();

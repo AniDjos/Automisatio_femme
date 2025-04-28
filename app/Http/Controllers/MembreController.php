@@ -29,7 +29,7 @@ class MembreController extends Controller
         $query = DB::table('membre')
             ->leftJoin('groupement', 'membre.groupement_id', '=', 'groupement.groupement_id')
             ->select('membre.*', 'groupement.nom as groupement_nom');
-
+            
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('membre.nom_membre', 'like', "%$search%")
@@ -37,6 +37,7 @@ class MembreController extends Controller
             });
         }
 
+        
         if ($groupementId) {
             $query->where('membre.groupement_id', $groupementId);
         }

@@ -54,8 +54,19 @@ class UtilisateurController extends Controller
             $query->where('role', $request->role);
         }
 
+        $search = $request->input('search');
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('users.nom', 'like', "%$search%")
+                  ->orWhere('users.prenom', 'like', "%$search%");
+            });
+        }
+
+        // Trier les résultats dans l'ordre décroissant par ID
+        $query->orderBy('id', 'desc');
+
         // Pagination
-        $utilisateurs = $query->paginate(4);
+        $utilisateurs = $query->paginate(6);
 
         return view('utilisateurs.index', compact('utilisateurs'));
     }

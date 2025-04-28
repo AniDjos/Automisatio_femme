@@ -103,176 +103,178 @@
 </div>
 
 <style>
-
-
-.content1{
-    margin:3rem 2rem 0rem 17rem;
-}
-/* Tableau de bord */
 .dashboard {
     margin: 3rem 2rem 2rem 17rem;
     width: 1200px;
 }
 
 .charts {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    width: 100%;
-    height: 400px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
 }
 
 .chart {
-    flex: 1;
-    background-color: #f9f9f9;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: 50%;
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(155, 135, 245, 0.1);
+    border: 1px solid #f0ecff;
 }
 
-/* Contenu principal */
+.chart h3 {
+    color: #6b5d9e;
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
 .content {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 2rem;
-    margin: 5rem 2rem 2rem 17rem;
+    margin: 2rem 2rem 2rem 17rem;
 }
 
-/* Cadre gauche */
 .left-panel {
-    flex: 1;
-    background-color: #f9f9f9;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(155, 135, 245, 0.1);
+    border: 1px solid #f0ecff;
 }
 
-.content .left-panel h2{
-    color:#9b87f5;font-size: 20px;font-weight: bold;
+.left-panel h2 {
+    color: #9b87f5;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f0ecff;
+    font-weight: 700;
 }
 
 .details p {
-    margin: 0.5rem 0;
-    font-size: 16px;
-    color: #333;
+    margin: 1rem 0;
+    font-size: 1rem;
+    color: #4a4a4a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: #faf9ff;
+    border-radius: 8px;
 }
 
-/* Cadres à droite */
+.details p strong {
+    color: #6b5d9e;
+    margin-right: 1rem;
+}
+
 .right-panel {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    display: grid;
+    gap: 2rem;
 }
 
 .card {
-    background-color: #f9f9f9;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(155, 135, 245, 0.1);
+    border: 1px solid #f0ecff;
 }
 
 .card h2 {
-    margin-bottom: 1rem;
-    color:#9b87f5;font-size: 20px;font-weight: bold;
+    color: #9b87f5;
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
 }
 
-/* Bouton retour */
 .btn-back {
-    display: inline-block;
-    margin-top: 2rem;
-    padding: 0.8rem 1.5rem;
-    font-size: 14px;
-    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background: #9b87f5;
     color: white;
-    background-color: #9b87f5;
-    border: none;
-    border-radius: 4px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin: 2rem 0 2rem 17rem;
     text-decoration: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
 .btn-back:hover {
-    background-color: #9b87f5;
+    background: #8874d4;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(155, 135, 245, 0.3);
 }
 
-/* Boutons Modifier et Supprimer */
 .action-buttons {
     display: flex;
     gap: 1rem;
-    margin-left: 17rem;
-    margin-bottom:2rem
+    margin: 2rem 0 2rem 17rem;
 }
 
-.btn-edit, .btn-delete {
-    display: inline-block;
-    padding: 0.8rem 1.5rem;
-    font-size: 14px;
-    font-weight: bold;
-    color: white;
+.btn-edit, .btn-delete, .btn-action {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
     border: none;
-    border-radius: 4px;
-    text-decoration: none;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .btn-edit {
-    background-color: #4caf50; 
-    margin-top:10px
+    background: #9b87f5;
+    color: white;
 }
 
 .btn-edit:hover {
-    background-color: #45a049;
+    background: #8874d4;
+    transform: translateY(-1px);
 }
 
 .btn-delete {
-    background-color: #f44336;
+    background: #ff4757;
+    color: white;
 }
 
 .btn-delete:hover {
-    background-color: #e53935;
-}
-
-.btn-delete-form {
-    display: inline;
-}
-
-.btn-action {
-    display: inline-block;
-    padding: 0.8rem 1.5rem;
-    font-size: 14px;
-    font-weight: bold;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.btn-deactivate {
-    background-color: #f44336;
-}
-
-.btn-deactivate:hover {
-    background-color: #e53935;
+    background: #ff3344;
+    transform: translateY(-1px);
 }
 
 .btn-activate {
-    background-color: #4caf50;
+    background: #2ed573;
+    color: white;
 }
 
-.btn-activate:hover {
-    background-color: #45a049;
+.btn-deactivate {
+    background: #ffa502;
+    color: white;
+}
+
+.content1 .card {
+    margin: 2rem 2rem 2rem 17rem;
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(155, 135, 245, 0.1);
+    border: 1px solid #f0ecff;
+}
+
+/* Chart styling */
+.chart canvas {
+    max-height: 300px;
 }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Graphique Effectif
+    // Updated Chart Styles
     const effectifCtx = document.getElementById('effectifChart').getContext('2d');
     new Chart(effectifCtx, {
         type: 'bar',
@@ -281,32 +283,54 @@
             datasets: [{
                 label: 'Effectif',
                 data: [{{ $groupement->effectif }}],
-                backgroundColor: '#9b87f5',
+                backgroundColor: 'rgba(155, 135, 245, 0.8)',
+                borderColor: '#9b87f5',
+                borderWidth: 2,
+                borderRadius: 12,
             }]
         },
         options: {
             responsive: true,
             plugins: {
-                legend: { display: false }
+                legend: { display: false },
+                tooltip: { 
+                    backgroundColor: '#6b5d9e',
+                    titleFont: { size: 14 },
+                    bodyFont: { size: 14 }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#f0ecff' }
+                }
             }
         }
     });
 
-    // Graphique Répartition des Appuis
     const appuiCtx = document.getElementById('appuiChart').getContext('2d');
     new Chart(appuiCtx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: ['Appuis reçus', 'Appuis manquants'],
             datasets: [{
-                data: [1, 0], // Exemple de données
-                backgroundColor: ['#9b87f5', '#f9c74f'],
+                data: [1, 0],
+                backgroundColor: [
+                    'rgba(155, 135, 245, 0.8)',
+                    'rgba(245, 135, 155, 0.2)'
+                ],
+                borderColor: '#ffffff',
+                borderWidth: 3,
             }]
         },
         options: {
             responsive: true,
+            cutout: '70%',
             plugins: {
-                legend: { position: 'bottom' }
+                legend: { 
+                    position: 'bottom',
+                    labels: { color: '#6b5d9e' }
+                }
             }
         }
     });

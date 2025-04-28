@@ -7,9 +7,6 @@
     <h1 class="page-title">Détails de l'Agrément</h1>
 
     <div class="card">
-        <div class="card-header">
-            <h3></h3>
-        </div>
         <div class="document">
             <div class="file">
                 @if(file_exists(public_path('agrements/' . $agrement->document)))
@@ -25,7 +22,7 @@
                 <p><strong>Structure :</strong> {{ $agrement->structure }}</p>
                 <p><strong>Référence :</strong> {{ $agrement->reference }}</p>
                 <p><strong>Date de Livraison :</strong> {{ $agrement->date_deliver }}</p>
-                <p><strong>Groupement :</strong> {{ $agrement->groupement->nom ?? 'Non spécifié' }}</p>
+                <p><strong>Groupement :</strong> {{ $agrement->groupement_nom ?? 'Non spécifié' }}</p>
             </div>
         </div>
     </div>

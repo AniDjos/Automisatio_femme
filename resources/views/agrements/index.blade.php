@@ -38,7 +38,7 @@
                         </a>
                     </td>
                     <td>{{ $agrement->date_deliver }}</td>
-                    <td>{{ $agrement->groupement->nom ?? 'Non spécifié' }}</td>
+                    <td>{{ $agrement->groupement_nom ?? 'Non spécifié' }}</td>
                     <td>
                         <!-- Bouton Vue -->
                         <a href="{{ route('agrement.show', $agrement->agrement_id) }}" class="btn-action btn-view" title="Voir">

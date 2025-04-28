@@ -3,9 +3,9 @@
 @section('name', 'Détails du Groupement')
 
 @section('content')
-<h1 style="margin: 2.5rem 2rem 2rem 17rem;color:#9b87f5;font-size: 24px;font-weight: bold; text-align:center">Tableau de board - {{ $groupement->groupement_nom }}</h1>
-<div class="dashboard">
-    
+<div class="dashboardd">
+    <h1>Tableau de board - {{ $groupement->groupement_nom }}</h1>
+<!--     
     <div class="charts">
         <div class="chart">
             <h3>Effectif</h3>
@@ -15,11 +15,31 @@
             <h3>Répartition des Appuis</h3>
             <canvas id="appuiChart"></canvas>
         </div>
-    </div>
+    </div> -->
+
+    <div class="action-buttons">
+    <a href="{{ route('groupements.index') }}" class="btn-back">Retour à la liste</a>
+    <a href="{{ route('groupements.edit', $groupement->groupement_id) }}" class="btn-edit">Modifier</a>
+    
+    <form action="{{ route('groupements.destroy', $groupement->groupement_id) }}" method="POST">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn-delete">Supprimer</button>
+    </form>
+
+    <form action="{{ route('groupements.toggleStatus', $groupement->groupement_id) }}" method="POST">
+        @csrf
+        @method('PUT')
+        @if ($groupement->statut)
+            <button type="submit" class="btn-deactivate">Désactiver</button>
+        @else
+            <button type="submit" class="btn-activate">Activer</button>
+        @endif
+    </form>
+</div>
 </div>
 
 <div class="content">
-    <!-- Cadre principal -->
     <div class="left-panel">
         <h2>Informations Générales</h2>
         <div class="details">
@@ -35,7 +55,6 @@
         </div>
     </div>
 
-    <!-- Cadres à droite -->
     <div class="right-panel">
         <div class="card">
             <h2>Appuis</h2>
@@ -62,50 +81,33 @@
 </div>
 
 <div class="content1">
-        <div class="card">
-            <h2>Equipement</h2>
-            @if ($groupement->agrement_structure)
-                <p><strong>Nom Equipement :</strong> {{ $groupement->equipement }}</p>
-                <p><strong>Etat Equipement :</strong> {{ $groupement->etat_equipement }}</p>
-                <p><strong>Difficulté :</strong> {{ $groupement->description_difficultie }}</p>
-                <p><strong>Besoin :</strong> {{ $groupement->description_besoin }}</p>
-            @else
-                <p>Aucun agrément enregistré.</p>
-            @endif
-        </div>
-</div>
-
-<a href="{{ route('groupements.index') }}" class="btn-back">Retour à la liste</a>
-
-<!-- Boutons Modifier, Supprimer et Activer/Désactiver -->
-<div class="action-buttons">
-    <a href="{{ route('groupements.edit', $groupement->groupement_id) }}" class="btn-edit">Modifier</a>
-    <form action="{{ route('groupements.destroy', $groupement->groupement_id) }}" method="POST" class="btn-delete-form">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce groupement ?')">Supprimer</button>
-    </form>
-
-    <!-- Bouton Activer/Désactiver -->
-    <form action="{{ route('groupements.toggleStatus', $groupement->groupement_id) }}" method="POST" style="display:inline;">
-        @csrf
-        @method('PUT')
-        @if ($groupement->statut)
-            <button type="submit" class="btn-action btn-deactivate" title="Désactiver">
-                <i class="bx bx-power-off"></i> Désactiver
-            </button>
+    <div class="card">
+        <h2>Equipement</h2>
+        @if ($groupement->equipement)
+            <p><strong>Nom Equipement :</strong> {{ $groupement->equipement }}</p>
+            <p><strong>État Equipement :</strong> {{ $groupement->etat_equipement }}</p>
+            <p><strong>Difficulté :</strong> {{ $groupement->description_difficultie }}</p>
+            <p><strong>Besoin :</strong> {{ $groupement->description_besoin }}</p>
         @else
-            <button type="submit" class="btn-action btn-activate" title="Activer">
-                <i class="bx bx-check-circle"></i> Activer
-            </button>
+            <p>Aucun équipement enregistré.</p>
         @endif
-    </form>
+    </div>
 </div>
 
 <style>
-.dashboard {
-    margin: 3rem 2rem 2rem 17rem;
+.dashboardd {
+    margin: 4rem 2rem 2rem 17rem;
     width: 1200px;
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboardd h1 {
+    color: #9b87f5;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    text-align: center;
 }
 
 .charts {
@@ -166,14 +168,18 @@
     border-radius: 8px;
 }
 
-.details p strong {
-    color: #6b5d9e;
-    margin-right: 1rem;
-}
-
 .right-panel {
     display: grid;
     gap: 2rem;
+}
+
+.right-panel h2 {
+    color: #9b87f5;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f0ecff;
+    font-weight: 700;
 }
 
 .card {
@@ -188,7 +194,19 @@
     color: #9b87f5;
     font-size: 1.25rem;
     margin-bottom: 1.5rem;
-    font-weight: 600;
+    font-weight: 700;
+}
+
+.card p{
+    margin: 1rem 0;
+    font-size: 1rem;
+    color: #4a4a4a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: #faf9ff;
+    border-radius: 8px;
 }
 
 .btn-back {
@@ -214,9 +232,10 @@
     display: flex;
     gap: 1rem;
     margin: 2rem 0 2rem 17rem;
+    align-items: center;
 }
 
-.btn-edit, .btn-delete, .btn-action {
+.btn-edit, .btn-delete, .btn-activate, .btn-deactivate {
     padding: 0.75rem 1.5rem;
     border-radius: 8px;
     font-weight: 600;
@@ -267,49 +286,67 @@
     border: 1px solid #f0ecff;
 }
 
-/* Chart styling */
 .chart canvas {
     max-height: 300px;
 }
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Updated Chart Styles
-    const effectifCtx = document.getElementById('effectifChart').getContext('2d');
-    new Chart(effectifCtx, {
-        type: 'bar',
+    // Effectif Chart (Radar)
+    new Chart(document.getElementById('effectifChart'), {
+        type: 'radar', // Type de diagramme
         data: {
-            labels: ['Effectif'],
+            labels: ['Effectif'], // Étiquettes pour le radar
             datasets: [{
-                label: 'Effectif',
-                data: [{{ $groupement->effectif }}],
-                backgroundColor: 'rgba(155, 135, 245, 0.8)',
-                borderColor: '#9b87f5',
-                borderWidth: 2,
-                borderRadius: 12,
+                label: 'Effectif du Groupement',
+                data: [{{ $groupement->effectif }}], // Données de l'effectif
+                backgroundColor: 'rgba(155, 135, 245, 0.2)', // Couleur de remplissage
+                borderColor: 'rgba(155, 135, 245, 1)', // Couleur de la bordure
+                borderWidth: 2, // Épaisseur de la bordure
+                pointBackgroundColor: 'rgba(155, 135, 245, 1)', // Couleur des points
             }]
         },
         options: {
             responsive: true,
             plugins: {
-                legend: { display: false },
-                tooltip: { 
+                legend: {
+                    position: 'top', // Position de la légende
+                    labels: {
+                        color: '#6b5d9e' // Couleur des étiquettes de la légende
+                    }
+                },
+                tooltip: {
                     backgroundColor: '#6b5d9e',
                     titleFont: { size: 14 },
                     bodyFont: { size: 14 }
                 }
             },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: '#f0ecff' }
+                r: {
+                    angleLines: {
+                        color: '#e0e0e0' // Couleur des lignes angulaires
+                    },
+                    grid: {
+                        color: '#e0e0e0' // Couleur de la grille
+                    },
+                    ticks: {
+                        backdropColor: 'transparent', // Suppression de l'arrière-plan des ticks
+                        color: '#6b5d9e' // Couleur des ticks
+                    },
+                    pointLabels: {
+                        color: '#6b5d9e', // Couleur des étiquettes des axes
+                        font: {
+                            size: 14
+                        }
+                    }
                 }
             }
         }
     });
 
-    const appuiCtx = document.getElementById('appuiChart').getContext('2d');
-    new Chart(appuiCtx, {
+    // Appuis Chart
+    new Chart(document.getElementById('appuiChart'), {
         type: 'doughnut',
         data: {
             labels: ['Appuis reçus', 'Appuis manquants'],

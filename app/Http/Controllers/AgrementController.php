@@ -12,39 +12,55 @@ use Illuminate\Support\Facades\Auth; // Importer Auth pour récupérer l'utilisa
 class AgrementController extends Controller
 {
 
+ 
     public function index(Request $request)
     {
+        // Récupérer l'utilisateur connecté
+        $user = Auth::user();
         $search = $request->input('search');
     
+        // Construire la requête de base
         $query = DB::table('agrement')
-            ->join('groupement', 'agrement.groupement_id', '=', 'groupement.groupement_id')  
+            ->join('groupement', 'agrement.groupement_id', '=', 'groupement.groupement_id')
             ->select(
                 'agrement.agrement_id',
                 'agrement.reference',
                 'agrement.document',
                 'agrement.structure',
                 'agrement.date_deliver',
-                'groupement.nom as groupement_nom',
+                'groupement.nom as groupement_nom'
             );
     
+        // Vérifier le rôle de l'utilisateur
+        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+            // Si l'utilisateur n'est pas admin ou gestionnaire, fi
+            redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+        }
+    
+        // Appliquer la recherche si un terme est fourni
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->Where('agrement.reference', 'like', "%$search%")
-                  ->orWhere('groupement.nom', 'like', "%$search%")
-        
-                  ;
+                $q->where('agrement.reference', 'like', "%$search%")
+                  ->orWhere('groupement.nom', 'like', "%$search%");
             });
         }
     
-        
-        $agrements = $query->orderBy('agrement.agrement_id', 'desc')->paginate(6); 
+        // Récupérer les agréments avec pagination
+        $agrements = $query->orderBy('agrement.agrement_id', 'desc')->paginate(6);
     
-        
+        // Retourner la vue avec les agréments
         return view('agrements.index', compact('agrements'));
     }
 
     public function create()
     {
+                        // Récupérer l'utilisateur connecté
+                        $user = Auth::user();
+    
+                        // Vérifier le rôle de l'utilisateur
+                        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+                            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+                        }
         $groupements = Groupement::all(); 
         return view('agrements.create', compact('groupements'));
     }
@@ -153,10 +169,11 @@ class AgrementController extends Controller
         
         $agrement = DB::table('agrement')
             ->join('groupement', 'agrement.groupement_id', '=', 'groupement.groupement_id')
+            ->join('structure', 'agrement.structure', '=', 'structure.structure_id')
             ->select(
                 'agrement.agrement_id',
                 'agrement.reference',
-                'agrement.structure',
+                'structure.structure',
                 'agrement.document',
                 'agrement.date_deliver',
                 'groupement.nom as groupement_nom'

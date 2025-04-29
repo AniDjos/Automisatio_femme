@@ -21,10 +21,19 @@ class GroupementController extends Controller
     /**
      * Affiche la liste des groupements avec recherche et pagination.
      */
+   
     public function index(Request $request)
     {
+        // Récupérer l'utilisateur connecté
+        $user = Auth::user();
+    
+        // Vérifier le rôle de l'utilisateur
+        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+        }
+    
         $search = $request->input('search');
-
+    
         // Construire la requête de recherche
         $query = DB::table('groupement')
             ->join('departement', 'groupement.departement_id', '=', 'departement.departement_id') 
@@ -46,7 +55,7 @@ class GroupementController extends Controller
                 'activite_principale.activite as activite_principale_nom', 
                 'activite_secondaire.activite as activite_secondaire_nom'
             );
-
+    
         // Appliquer la recherche si un terme est fourni
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -59,14 +68,13 @@ class GroupementController extends Controller
                   ->orWhere('activite_secondaire.activite', 'like', "%$search%")
                   ->orWhere('groupement.effectif', '=', $search)
                   ->orWhere('groupement.statut', '=', $search); 
-
             });
         }
-
+    
         // Pagination des résultats
-        $groupements = $query->OrderBy('groupement_id','desc')->paginate(6); // Limite à 6 groupements par page
-
-        // Retourne la vue avec les données
+        $groupements = $query->orderBy('groupement_id', 'desc')->paginate(6);
+    
+        // Retourner la vue avec les données
         return view('groupements.index', compact('groupements'));
     }
 
@@ -75,6 +83,13 @@ class GroupementController extends Controller
      */
     public function create()
     {
+                        // Récupérer l'utilisateur connecté
+                        $user = Auth::user();
+    
+                        // Vérifier le rôle de l'utilisateur
+                        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+                            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+                        }
         $departements = Departement::all();
         $activites = Activite::all();
         $filieres = Filiere::all();
@@ -373,13 +388,16 @@ class GroupementController extends Controller
             ->leftJoin('activite as activite_principale', 'activite_principale.activite_id', '=', 'groupement.activite_principale_id') 
             ->leftJoin('activite as activite_secondaire', 'activite_secondaire.activite_id', '=', 'groupement.activite_secondaire_id')
             ->leftJoin('equipement', 'equipement.groupement_id', '=', 'groupement.groupement_id') 
-            ->leftJoin('appuis', 'appuis.groupement_id', '=', 'groupement.groupement_id') 
+            ->leftJoin('appuis', 'appuis.groupement_id', '=', 'groupement.groupement_id')
+            ->leftJoin('filiere', 'filiere.filiere_id', '=', 'groupement.filiere_id')
             ->leftJoin('agrement', 'agrement.groupement_id', '=', 'groupement.groupement_id') 
+            ->leftJoin('structure', 'agrement.structure', '=', 'structure.structure_id')
             ->select(
                 'groupement.groupement_id',
                 'groupement.nom as groupement_nom',
                 'groupement.effectif',
                 'groupement.statut',
+                'filiere.filiere_nom',
                 'groupement.revenu_mens',
                 'groupement.benefice_mens',
                 'groupement.depense_mens',
@@ -400,7 +418,7 @@ class GroupementController extends Controller
                 'equipement.description_difficultie as description_difficultie',
                 'equipement.description_besoin as description_besoin',
                 'appuis.date_appuis as appui_date', 
-                'agrement.structure as agrement_structure', 
+                'structure.structure',
                 'agrement.reference as agrement_reference', 
                 'agrement.date_deliver as agrement_date' 
             )

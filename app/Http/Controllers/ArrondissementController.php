@@ -5,11 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Commune;
 use App\Models\Arrondissement;
+use Illuminate\Support\Facades\Auth;
 
 class ArrondissementController extends Controller
 {
     public function create()
     {
+                        // Récupérer l'utilisateur connecté
+                        $user = Auth::user();
+    
+                        // Vérifier le rôle de l'utilisateur
+                        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+                            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+                        }
         $communes = Commune::all(); // Récupère toutes les communes
         return view('arrondissements.create', compact('communes'));
     }
@@ -29,9 +37,21 @@ class ArrondissementController extends Controller
         return redirect()->route('arrondissements.index')->with('success', 'Arrondissement enregistré avec succès.');
     }
     
+
     public function index()
     {
-        $arrondissements = Arrondissement::with('commune')->orderBy('arrondissement_id', 'desc')->paginate(7); // Récupère les arrondissements avec leur commune
+        // Récupérer l'utilisateur connecté
+        $user = Auth::user();
+    
+        // Vérifier le rôle de l'utilisateur
+        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+        }
+    
+        // Récupérer les arrondissements avec leur commune
+        $arrondissements = Arrondissement::with('commune')->orderBy('arrondissement_id', 'desc')->paginate(7);
+    
+        // Retourner la vue avec les arrondissements
         return view('arrondissements.index', compact('arrondissements'));
     }
 

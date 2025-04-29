@@ -94,7 +94,7 @@
                     <option value="" disabled selected>Choisissez un rôle</option>
                     <option value="admin">Admin</option>
                     <option value="Gestionnaire de la plateforme">Gestionnaire de la plateforme</option>
-                    <option value="moderateur">Simple Utilisateur</option>
+                    <option value="Responsable Groupement">Responsable Groupemen</option>
                 </select>
             </div>
         </div>

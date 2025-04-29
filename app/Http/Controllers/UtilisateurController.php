@@ -36,10 +36,19 @@ class UtilisateurController extends Controller
         return redirect()->route('utilisateurs.index')->with('success', 'Utilisateur créé avec succès.');
     }
 
+
     public function index(Request $request)
     {
+        // Récupérer l'utilisateur connecté
+        $user = Auth::user();
+    
+        // Vérifier le rôle de l'utilisateur
+        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+            return redirect()->route('dashboard')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+        }
+    
         $query = User::query();
-
+    
         // Filtrer par statut
         if ($request->has('filter')) {
             if ($request->filter === 'activé') {
@@ -48,12 +57,13 @@ class UtilisateurController extends Controller
                 $query->where('statut', false);
             }
         }
-
+    
         // Filtrer par rôle
         if ($request->has('role')) {
             $query->where('role', $request->role);
         }
-
+    
+        // Recherche par nom ou prénom
         $search = $request->input('search');
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -61,18 +71,26 @@ class UtilisateurController extends Controller
                   ->orWhere('users.prenom', 'like', "%$search%");
             });
         }
-
+    
         // Trier les résultats dans l'ordre décroissant par ID
         $query->orderBy('id', 'desc');
-
+    
         // Pagination
         $utilisateurs = $query->paginate(6);
-
+    
+        // Retourner la vue avec les utilisateurs
         return view('utilisateurs.index', compact('utilisateurs'));
     }
 
     public function create()
     {
+                        // Récupérer l'utilisateur connecté
+                        $user = Auth::user();
+    
+                        // Vérifier le rôle de l'utilisateur
+                        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+                            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+                        }
         return view('utilisateurs.create');
     }
 

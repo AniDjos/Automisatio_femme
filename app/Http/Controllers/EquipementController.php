@@ -9,11 +9,19 @@ use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Structure;
 use App\Models\Appuis;
+use Illuminate\Support\Facades\Log;
 
 class EquipementController extends Controller
 {
     public function create()
     {
+                        // Récupérer l'utilisateur connecté
+                        $user = Auth::user();
+    
+                        // Vérifier le rôle de l'utilisateur
+                        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+                            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+                        }
         $groupements = Groupement::all(); // Récupère tous les groupements
         return view('equipement.create', compact('groupements'));
     }
@@ -43,10 +51,18 @@ class EquipementController extends Controller
         return redirect()->route('equipement.create')->with('success', 'Équipement enregistré avec succès.');
     }
 
+
     public function index()
     {
-        $equipements = Equipement::with('groupement')->orderBy('equipement_id','desc')->paginate(7); 
-        $groupements = Groupement::all();
+         // Récupérer l'utilisateur connecté
+         $user = Auth::user();
+    
+         // Vérifier le rôle de l'utilisateur
+         if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+             return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+         }
+        $groupements = Groupement::all(); // Récupère tous les groupements
+        $equipements = Equipement::with('groupement')->paginate(7); // Récupère les équipements avec leur groupement
         return view('equipements.index', compact('equipements', 'groupements'));
     }
 

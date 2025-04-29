@@ -17,7 +17,7 @@
         </div>
     </div> -->
     <div class="dropdown">
-        <button class="btn-dropdown">Actions <i class="fas fa-chevron-down"></i></button>
+        <button class="btn-dropdown">Actions</button>
         <div class="dropdown-menu">
             <!-- Retour à la liste -->
             <a href="{{ route('groupements.index') }}" class="dropdown-item">Retour à la liste</a>
@@ -60,8 +60,12 @@
             <p><strong>Commune :</strong> {{ $groupement->commune_nom ?? 'Non spécifié' }}</p>
             <p><strong>Arrondissement :</strong> {{ $groupement->arrondissement_nom ?? 'Non spécifié' }}</p>
             <p><strong>Quartier :</strong> {{ $groupement->quartier_nom ?? 'Non spécifié' }}</p>
+            <p><strong>Filière :</strong> {{ $groupement->filiere_nom ?? 'Non spécifié' }}</p>
             <p><strong>Activité principale :</strong> {{ $groupement->activite_principale_nom ?? 'Non spécifié' }}</p>
             <p><strong>Activité secondaire :</strong> {{ $groupement->activite_secondaire_nom ?? 'Non spécifié' }}</p>
+            <p><strong>Revenu Mensuel :</strong> {{ number_format($groupement->revenu_mens, 0, ',', ' ') }} FCFA</p>
+            <p><strong>Dépense Mensuel :</strong> {{ number_format($groupement->depense_mens, 0, ',', ' ') }} FCFA</p>
+            <p><strong>Bénéfice :</strong>{{ number_format($groupement->benefice_mens, 0, ',', ' ') }} FCFA</p>
         </div>
     </div>
 
@@ -70,7 +74,7 @@
             <h2>Appuis</h2>
             @if ($groupement->appui_type)
             <p><strong>Type :</strong> {{ $groupement->appui_type }}</p>
-            <p><strong>Description :</strong> {{ $groupement->appui_description }}</p>
+            <p><strong>Description: </strong> {{ $groupement->appui_description }}</p>
             <p><strong>Date :</strong> {{ $groupement->appui_date }}</p>
             @else
             <p>Aucun appui enregistré.</p>
@@ -79,8 +83,8 @@
 
         <div class="card">
             <h2>Agréments</h2>
-            @if ($groupement->agrement_structure)
-            <p><strong>Structure :</strong> {{ $groupement->agrement_structure }}</p>
+            @if ($groupement->structure)
+            <p><strong>Structure :</strong> {{ $groupement->structure }}</p>
             <p><strong>Référence :</strong> {{ $groupement->agrement_reference }}</p>
             <p><strong>Date de délivrance :</strong> {{ $groupement->agrement_date }}</p>
             @else
@@ -127,7 +131,7 @@
 
 .btn-dropdown {
     padding: 0.75rem 1.5rem;
-    background: green;
+    background: #8874d4;
     color: white;
     border: none;
     border-radius: 8px;
@@ -198,6 +202,8 @@
     gap: 2rem;
     margin: 2rem 2rem 2rem 17rem;
 }
+
+
 
 .left-panel {
     background: white;
@@ -347,6 +353,15 @@
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(155, 135, 245, 0.1);
     border: 1px solid #f0ecff;
+}
+
+.content1 h2 {
+    color: #9b87f5;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f0ecff;
+    font-weight: 700;
 }
 
 .chart canvas {

@@ -3,12 +3,20 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; // Importer Auth pour récupérer l'utilisateur connecté
 use App\Models\Departement;
 
 class DepartementController extends Controller
 {
     public function create()
     {
+                        // Récupérer l'utilisateur connecté
+                        $user = Auth::user();
+    
+                        // Vérifier le rôle de l'utilisateur
+                        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+                            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+                        }
         return view('departements.create');
     }
 
@@ -26,9 +34,21 @@ class DepartementController extends Controller
         return redirect()->route('departements.index')->with('success', 'Département enregistré avec succès.');
     }
 
+
     public function index()
     {
-        $departements = Departement::orderBy('departement_id', 'desc')->paginate(7); // Récupère les départements avec pagination
+        // Récupérer l'utilisateur connecté
+        $user = Auth::user();
+    
+        // Vérifier le rôle de l'utilisateur
+        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+        }
+    
+        // Récupérer les départements avec pagination
+        $departements = Departement::orderBy('departement_id', 'desc')->paginate(7);
+    
+        // Retourner la vue avec les départements
         return view('departements.index', compact('departements'));
     }
 

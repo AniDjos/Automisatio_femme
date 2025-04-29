@@ -4,11 +4,20 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth; // Importer Auth pour récupérer l'utilisateur connecté
+use App\Models\Filiere; // Assurez-vous d'importer le modèle Filiere
 
 class FiliereController extends Controller
 {
     public function create()
     {
+                // Récupérer l'utilisateur connecté
+                $user = Auth::user();
+    
+                // Vérifier le rôle de l'utilisateur
+                if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+                    return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+                }
         return view('filiere.create');
     }
 
@@ -28,9 +37,21 @@ class FiliereController extends Controller
         return redirect()->route('filiere.create')->with('success', 'Filière créée avec succès.');
     }
 
+  
     public function index()
     {
-        $filieres = DB::table('filiere')->orderBy('filiere_id','desc')->paginate(7); // Récupère les filières avec pagination
+        // Récupérer l'utilisateur connecté
+        $user = Auth::user();
+    
+        // Vérifier le rôle de l'utilisateur
+        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+        }
+    
+        // Récupérer les filières avec pagination
+        $filieres = DB::table('filiere')->orderBy('filiere_id', 'desc')->paginate(7);
+    
+        // Retourner la vue avec les filières
         return view('filieres.index', compact('filieres'));
     }
 

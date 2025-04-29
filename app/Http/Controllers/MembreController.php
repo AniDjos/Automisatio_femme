@@ -6,11 +6,20 @@ use Illuminate\Http\Request;
 use App\Models\Groupement;
 use App\Models\Membre;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth; // Importer Auth pour récupérer l'utilisateur connecté
+use App\Models\User;
 
 class MembreController extends Controller
 {
     public function create()
     {
+                        // Récupérer l'utilisateur connecté
+                        $user = Auth::user();
+    
+                        // Vérifier le rôle de l'utilisateur
+                        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+                            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+                        }
         // Récupère tous les groupements pour les afficher dans le formulaire
         $groupements = Groupement::all();
 
@@ -18,13 +27,22 @@ class MembreController extends Controller
         return view('membres.create', compact('groupements'));
     }
 
+
     public function index(Request $request)
     {
+        // Récupérer l'utilisateur connecté
+        $user = Auth::user();
+    
+        // Vérifier le rôle de l'utilisateur
+        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+        }
+    
         // Récupérer les filtres
         $search = $request->input('search');
         $groupementId = $request->input('groupement_id');
         $role = $request->input('role');
-
+    
         // Construire la requête
         $query = DB::table('membre')
             ->leftJoin('groupement', 'membre.groupement_id', '=', 'groupement.groupement_id')
@@ -36,33 +54,27 @@ class MembreController extends Controller
                   ->orWhere('membre.prenom_membre', 'like', "%$search%");
             });
         }
-
-        
+    
         if ($groupementId) {
             $query->where('membre.groupement_id', $groupementId);
         }
-
+    
         if ($role) {
             $query->where('membre.role_stimule', $role);
         }
-
+    
         // Récupérer les membres avec pagination
-        $membres = $query->OrderBy('membre_id','desc')->paginate(7);
-
-        // Vérifier si la requête est AJAX
-        if ($request->ajax()) {
-            return view('membres.index', compact('membres'))->render();
-        }
-
+        $membres = $query->orderBy('membre_id', 'desc')->paginate(7);
+    
         // Récupérer les groupements pour le filtre
         $groupements = DB::table('groupement')->select('groupement_id', 'nom as groupement_nom')->get();
-
+    
         // Récupérer les rôles distincts pour le filtre
         $roles = DB::table('membre')->select('role_stimule')->distinct()->pluck('role_stimule');
-
+    
+        // Retourner la vue avec les membres
         return view('membres.index', compact('membres', 'groupements', 'roles'));
     }
-
     public function store(Request $request)
     {
         // Validation des données

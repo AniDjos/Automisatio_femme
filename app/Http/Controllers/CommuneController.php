@@ -5,11 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Departement;
 use App\Models\Commune;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CommuneController extends Controller
 {
     public function create()
     {
+                        // Récupérer l'utilisateur connecté
+                        $user = Auth::user();
+    
+                        // Vérifier le rôle de l'utilisateur
+                        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+                            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+                        }
         $departements = Departement::all(); // Récupère tous les départements
         return view('communes.create', compact('departements'));
     }
@@ -29,9 +38,22 @@ class CommuneController extends Controller
         return redirect()->route('communes.index')->with('success', 'Commune enregistrée avec succès.');
     }
 
+   
+
     public function index()
     {
-        $communes = Commune::with('departement')->orderBy('commune_id', 'desc')->paginate(10); // Récupère les communes avec leur département
+        // Récupérer l'utilisateur connecté
+        $user = Auth::user();
+    
+        // Vérifier le rôle de l'utilisateur
+        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+        }
+    
+        // Récupérer les communes avec leur département
+        $communes = Commune::with('departement')->orderBy('commune_id', 'desc')->paginate(10);
+    
+        // Retourner la vue avec les communes
         return view('communes.index', compact('communes'));
     }
 

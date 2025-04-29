@@ -14,6 +14,13 @@ class AppuiController extends Controller
 {
     public function create()
     {
+                        // Récupérer l'utilisateur connecté
+                        $user = Auth::user();
+    
+                        // Vérifier le rôle de l'utilisateur
+                        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+                            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+                        }
         $groupements = Groupement::all(); 
         $structures = Structure::all(); 
         return view('appuis.create', compact('groupements', 'structures'));
@@ -43,20 +50,25 @@ class AppuiController extends Controller
         return redirect()->route('appuis.index')->with('success', 'Appui enregistré avec succès.');
     }
 
+
     public function index()
     {
-        // Vérifier si l'utilisateur est connecté
+        // Récupérer l'utilisateur connecté
         $user = Auth::user();
-
-        // Récupérer uniquement les appuis liés à cet utilisateur
-        $appuis = Appuis::with(['groupement', 'structure'])
-            ->where('users_id', $user->id)
-            ->orderBy('appuis_id', 'desc')
-            ->paginate(7);
-
-        // Récupérer les groupements liés à cet utilisateur
-        $groupements = Groupement::where('user_id', $user->id)->get();
-
+    
+        // Vérifier le rôle de l'utilisateur
+        if ($user->role === 'admin' || $user->role === 'gestionnaire') {
+            // Si l'utilisateur est admin ou gestionnaire, récupérer tous les appuis
+            $groupements = Groupement::all();
+            $appuis = Appuis::with(['groupement', 'structure'])
+                ->orderBy('appuis_id', 'desc')
+                ->paginate(7);
+        } else {
+            // Sinon, afficher un message d'erreur ou rediriger
+            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+        }
+    
+        // Retourner la vue avec les appuis
         return view('appuis.index', compact('appuis', 'groupements'));
     }
 

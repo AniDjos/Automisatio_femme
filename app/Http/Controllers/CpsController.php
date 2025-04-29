@@ -8,7 +8,8 @@ use App\Models\Departement;
 use App\Models\Commune;
 use App\Models\Arrondissement;
 use App\Models\Quartier;
-use Illuminate\Support\Facades\Auth; // Importer Auth pour récupérer l'utilisateur connecté
+use Illuminate\Support\Facades\Auth; 
+use Illuminate\Support\Facades\DB;
 
 class CpsController extends Controller
 {
@@ -20,14 +21,12 @@ class CpsController extends Controller
         $user = Auth::user();
     
         // Vérifier le rôle de l'utilisateur
-        if ($user->role === 'admin' || $user->role === 'gestionnaire') {
+        if ($user->role === 'admin' || $user->role === 'gestionnaire de la plateforme') {
             // Si l'utilisateur est admin ou gestionnaire, récupérer tous les CPS
             $cps = Cps::orderBy('cps_id', 'desc')->paginate(7);
         } else {
             // Sinon, récupérer uniquement les CPS liés à l'utilisateur connecté
-            $cps = Cps::where('users_id', $user->id)
-                ->orderBy('cps_id', 'desc')
-                ->paginate(7);
+            redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
         }
     
         // Retourner la vue avec les CPS
@@ -36,6 +35,13 @@ class CpsController extends Controller
 
     public function create()
     {
+                        // Récupérer l'utilisateur connecté
+                        $user = Auth::user();
+    
+                        // Vérifier le rôle de l'utilisateur
+                        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+                            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+                        }
         // Récupérer tous les départements
         $departements = Departement::all();
 

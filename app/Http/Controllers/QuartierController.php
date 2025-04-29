@@ -6,11 +6,20 @@ use Illuminate\Http\Request;
 use App\Models\Quartier;
 use App\Models\Arrondissement;
 use App\Models\Commune;
+use Illuminate\Support\Facades\Auth; // Importer Auth pour récupérer l'utilisateur connecté
+use Illuminate\Support\Facades\DB;
 
 class QuartierController extends Controller
 {
     public function create()
     {
+                        // Récupérer l'utilisateur connecté
+                        $user = Auth::user();
+    
+                        // Vérifier le rôle de l'utilisateur
+                        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+                            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+                        }
         $arrondissements = Arrondissement::all(); 
         return view('quartier.create', compact('arrondissements'));
     }
@@ -37,11 +46,23 @@ class QuartierController extends Controller
         return redirect()->route('quartier.index')->with('success', 'Quartier créé avec succès.');
     }
 
+   
     public function index()
     {
-        $quartiers = Quartier::with(['arrondissement.commune']) ->orderBy('quartier_id', 'desc')->paginate(7);
-                // Trier les résultats dans l'ordre décroissant par ID
-       
+        // Récupérer l'utilisateur connecté
+        $user = Auth::user();
+    
+        // Vérifier le rôle de l'utilisateur
+        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+        }
+    
+        // Récupérer les quartiers avec leurs arrondissements et communes
+        $quartiers = Quartier::with(['arrondissement.commune'])
+            ->orderBy('quartier_id', 'desc') // Trier les résultats dans l'ordre décroissant par ID
+            ->paginate(7);
+    
+        // Retourner la vue avec les quartiers
         return view('quartier.index', compact('quartiers'));
     }
 

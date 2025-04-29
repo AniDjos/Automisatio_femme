@@ -31,7 +31,7 @@ class CommuneController extends Controller
 
     public function index()
     {
-        $communes = Commune::with('departement')->paginate(10); // Récupère les communes avec leur département
+        $communes = Commune::with('departement')->orderBy('commune_id', 'desc')->paginate(10); // Récupère les communes avec leur département
         return view('communes.index', compact('communes'));
     }
 

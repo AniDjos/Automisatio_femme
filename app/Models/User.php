@@ -46,4 +46,18 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+    public function appuis()
+    {
+        return $this->hasMany(Appuis::class, 'users_id');
+    }
+
+    public function groupements()
+    {
+        return $this->hasMany(Groupement::class, 'users_id');
+    }
+
+    public function structures()
+    {
+        return $this->hasMany(Structure::class, 'users_id');
+    }
 }

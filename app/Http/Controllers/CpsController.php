@@ -8,6 +8,7 @@ use App\Models\Departement;
 use App\Models\Commune;
 use App\Models\Arrondissement;
 use App\Models\Quartier;
+use Illuminate\Support\Facades\Auth; // Importer Auth pour récupérer l'utilisateur connecté
 
 class CpsController extends Controller
 {
@@ -15,7 +16,21 @@ class CpsController extends Controller
 
     public function index()
     {
-        $cps = Cps::paginate(7); // Récupère les CPS avec pagination
+        // Récupérer l'utilisateur connecté
+        $user = Auth::user();
+    
+        // Vérifier le rôle de l'utilisateur
+        if ($user->role === 'admin' || $user->role === 'gestionnaire') {
+            // Si l'utilisateur est admin ou gestionnaire, récupérer tous les CPS
+            $cps = Cps::orderBy('cps_id', 'desc')->paginate(7);
+        } else {
+            // Sinon, récupérer uniquement les CPS liés à l'utilisateur connecté
+            $cps = Cps::where('users_id', $user->id)
+                ->orderBy('cps_id', 'desc')
+                ->paginate(7);
+        }
+    
+        // Retourner la vue avec les CPS
         return view('cps.index', compact('cps'));
     }
 
@@ -50,13 +65,14 @@ class CpsController extends Controller
             'quartier.exists' => 'Le quartier sélectionné est invalide.',
         ]);
 
-        // Création du CPS
+        // Création du CPS avec l'ID de l'utilisateur connecté
         Cps::create([
             'cps_libelle' => $validatedData['cps_libelle'],
             'departement_id' => $validatedData['departement'],
             'commune_id' => $validatedData['commune'],
             'arrondissement_id' => $validatedData['arrondissement'],
             'quartier_id' => $validatedData['quartier'],
+            'users_id' => Auth::id(), 
         ]);
 
         // Redirection avec un message de succès

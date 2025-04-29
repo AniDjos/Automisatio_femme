@@ -7,6 +7,7 @@ use App\Models\Groupement;
 use App\Models\Agrement;
 use App\Models\Structure;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth; // Importer Auth pour récupérer l'utilisateur connecté
 
 class AgrementController extends Controller
 {
@@ -29,12 +30,14 @@ class AgrementController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->Where('agrement.reference', 'like', "%$search%")
-                  ->orWhere('groupement.nom', 'like', "%$search%");
+                  ->orWhere('groupement.nom', 'like', "%$search%")
+        
+                  ;
             });
         }
     
         
-        $agrements = $query->paginate(6); 
+        $agrements = $query->orderBy('agrement.agrement_id', 'desc')->paginate(6); 
     
         
         return view('agrements.index', compact('agrements'));
@@ -64,13 +67,14 @@ class AgrementController extends Controller
             $file->move(public_path('agrements'), $filename);
         }
 
-        // Création de l'agrément
+        // Création de l'agrément avec l'ID de l'utilisateur connecté
         Agrement::create([
             'structure' => $request->input('structure'),
             'reference' => $request->input('reference'),
             'document' => $filename, // Nom du fichier enregistré
             'date_deliver' => $request->input('date_deliver'),
             'groupement_id' => $request->input('groupement_id'),
+            'users_id' => Auth::id(), // Ajouter l'ID de l'utilisateur connecté
         ]);
 
         // Redirection avec un message de succès

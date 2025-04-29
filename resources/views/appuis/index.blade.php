@@ -17,9 +17,22 @@
         </a>
     </div>
 
+    <div class="appui-filters">
+        <!-- Champ de recherche -->
+        <input type="text" id="searchInput" placeholder="Rechercher dans le tableau..." class="search-input">
+
+        <!-- Champ de sélection pour filtrer par groupement -->
+        <select id="groupementFilter" class="filter-select">
+            <option value="">Tous les groupements</option>
+            @foreach($groupements as $groupement)
+                <option value="{{ $groupement->nom }}">{{ $groupement->nom }}</option>
+            @endforeach
+        </select>
+    </div>
+
     <div class="elegant-card">
         <div class="table-responsive">
-            <table class="appui-table">
+            <table class="appui-table" id="appuiTable">
                 <thead>
                     <tr>
                         <th class="column-id"><i class='bx bx-id-card'></i> ID</th>
@@ -382,6 +395,44 @@
     background-color: rgba(155, 135, 245, 0.1);
 }
 
+.appui-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+}
+
+.search-input {
+    flex: 1;
+    padding: 0.8rem;
+    font-size: 16px;
+    border: 1px solid #E5DEFF;
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    border-color: #6c5ce7;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+}
+
+.filter-select {
+    padding: 0.8rem;
+    font-size: 16px;
+    border: 1px solid #E5DEFF;
+    border-radius: 8px;
+    background-color: #fff;
+    transition: all 0.3s ease;
+}
+
+.filter-select:focus {
+    border-color: #6c5ce7;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+}
+
 /* Responsive */
 @media (max-width: 1200px) {
     .appui-container {
@@ -419,4 +470,36 @@
 
 <!-- Include Boxicons CSS -->
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('searchInput');
+    const groupementFilter = document.getElementById('groupementFilter');
+    const table = document.getElementById('appuiTable');
+    const rows = table.querySelectorAll('tbody tr');
+
+    // Fonction pour filtrer les lignes du tableau
+    function filterTable() {
+        const searchValue = searchInput.value.toLowerCase();
+        const groupementValue = groupementFilter.value.toLowerCase();
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(' ');
+            const groupementText = row.querySelector('.cell-group')?.textContent.toLowerCase() || '';
+
+            // Vérifie si la ligne correspond à la recherche et au filtre de groupement
+            if (rowText.includes(searchValue) && (groupementValue === '' || groupementText === groupementValue)) {
+                row.style.display = ''; // Affiche la ligne
+            } else {
+                row.style.display = 'none'; // Masque la ligne
+            }
+        });
+    }
+
+    // Écouteurs d'événements pour la recherche et le filtre
+    searchInput.addEventListener('input', filterTable);
+    groupementFilter.addEventListener('change', filterTable);
+});
+</script>
 @endsection

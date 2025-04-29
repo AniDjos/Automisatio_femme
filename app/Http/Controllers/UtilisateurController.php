@@ -84,9 +84,14 @@ class UtilisateurController extends Controller
             'prenom' => 'required|string|max:50',
             'email' => 'required|email|max:100|unique:users,email,' . $id . ',id',
             'role' => 'required|string|max:255',
-            'password' => 'nullable|string|min:8|confirmed', 
+            'password' => 'nullable|string|min:8|confirmed',
             'statut' => 'required|boolean',
         ]);
+
+        // Vérification de l'utilisateur connecté
+        if (!Auth::user()->can('update', User::class)) {
+            return redirect()->route('utilisateurs.index')->with('error', 'Action non autorisée.');
+        }
 
         // Mise à jour de l'utilisateur
         DB::table('users')->where('id', $id)->update([
@@ -94,21 +99,24 @@ class UtilisateurController extends Controller
             'prenom' => $validatedData['prenom'],
             'email' => $validatedData['email'],
             'role' => $validatedData['role'],
-            'password' => Hash::make($validatedData['password']), 
+            'password' => $validatedData['password'] ? Hash::make($validatedData['password']) : DB::raw('password'),
             'statut' => $validatedData['statut'],
             'updated_at' => now(),
         ]);
 
-        // Redirection avec un message de succès
         return redirect()->route('utilisateurs.index')->with('success', 'Utilisateur mis à jour avec succès.');
     }
 
     public function destroy($id)
     {
+        // Vérification de l'utilisateur connecté
+        if (!Auth::user()->can('delete', User::class)) {
+            return redirect()->route('utilisateurs.index')->with('error', 'Action non autorisée.');
+        }
+
         // Supprimer l'utilisateur par son ID
         DB::table('users')->where('id', $id)->delete();
 
-        // Redirection avec un message de succès
         return redirect()->route('utilisateurs.index')->with('success', 'Utilisateur supprimé avec succès.');
     }
 
@@ -142,6 +150,11 @@ class UtilisateurController extends Controller
 
     public function toggleStatus($id)
     {
+        // Vérification de l'utilisateur connecté
+        if (!Auth::user()->can('update', User::class)) {
+            return redirect()->route('utilisateurs.index')->with('error', 'Action non autorisée.');
+        }
+
         // Récupérer l'utilisateur
         $utilisateur = DB::table('users')->where('id', $id)->first();
 
@@ -157,7 +170,6 @@ class UtilisateurController extends Controller
             'updated_at' => now(),
         ]);
 
-        // Message de succès
         $message = $nouveauStatut ? 'Utilisateur activé avec succès.' : 'Utilisateur désactivé avec succès.';
         return redirect()->route('utilisateurs.index')->with('success', $message);
     }

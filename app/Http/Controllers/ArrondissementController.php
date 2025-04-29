@@ -31,7 +31,7 @@ class ArrondissementController extends Controller
     
     public function index()
     {
-        $arrondissements = Arrondissement::with('commune')->paginate(7); // Récupère les arrondissements avec leur commune
+        $arrondissements = Arrondissement::with('commune')->orderBy('arrondissement_id', 'desc')->paginate(7); // Récupère les arrondissements avec leur commune
         return view('arrondissements.index', compact('arrondissements'));
     }
 

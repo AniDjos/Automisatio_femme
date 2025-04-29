@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 use App\Models\Groupement;
 use App\Models\Equipement;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; 
+use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\Models\Structure;
+use App\Models\Appuis;
 
 class EquipementController extends Controller
 {
@@ -24,8 +29,15 @@ class EquipementController extends Controller
             'groupement_id' => 'required|exists:groupement,groupement_id',
         ]);
 
-        // Création de l'équipement
-        Equipement::create($request->all());
+        // Création de l'équipement avec l'ID de l'utilisateur connecté
+        Equipement::create([
+            'equipment_libelle' => $request->input('equipment_libelle'),
+            'stat_equipement' => $request->input('stat_equipement'),
+            'description_difficultie' => $request->input('description_difficultie'),
+            'description_besoin' => $request->input('description_besoin'),
+            'groupement_id' => $request->input('groupement_id'),
+            'users_id' => Auth::id(), // Ajouter l'ID de l'utilisateur connecté
+        ]);
 
         // Redirection avec un message de succès
         return redirect()->route('equipement.create')->with('success', 'Équipement enregistré avec succès.');
@@ -33,8 +45,9 @@ class EquipementController extends Controller
 
     public function index()
     {
-        $equipements = Equipement::with('groupement')->paginate(7); // Récupère les équipements avec leur groupement
-        return view('equipements.index', compact('equipements'));
+        $equipements = Equipement::with('groupement')->orderBy('equipement_id','desc')->paginate(7); 
+        $groupements = Groupement::all();
+        return view('equipements.index', compact('equipements', 'groupements'));
     }
 
     public function update(Request $request, $id)

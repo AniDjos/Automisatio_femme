@@ -72,6 +72,8 @@ Route::post('/get-quartiers', [GroupementController::class, 'getQuartiers'])->na
 
 Route::put('/groupements/{id}/toggle-status', [GroupementController::class, 'toggleStatus'])->name('groupements.toggleStatus');
 
+Route::get('/groupement/{id}/dashboard', [GroupementController::class, 'dashboard'])->name('groupement.dashboard');
+
 /**
  * * Routes pour la gestion des membres
  * * Ces routes permettent de créer, afficher, modifier et supprimer des membres.

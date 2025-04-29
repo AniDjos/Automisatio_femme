@@ -16,8 +16,12 @@
 
     <div class="agrement-card">
         <!-- Tableau des agréments -->
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Rechercher dans le tableau..." class="search-input">
+        </div>
+
         <div class="table-responsive">
-            <table class="agrement-table">
+            <table class="agrement-table" id="agrementTable">
                 <thead>
                     <tr>
                         <th><i class='bx bx-hash'></i> ID</th>
@@ -32,7 +36,7 @@
                 <tbody>
                     @forelse($agrements as $agrement)
                         <tr>
-                            <td> <span class="badge">#{{ $agrement->agrement_id }}</span></td>
+                            <td><span class="badge">#{{ $agrement->agrement_id }}</span></td>
                             <td>{{ $agrement->structure }}</td>
                             <td>{{ $agrement->reference }}</td>
                             <td>
@@ -45,17 +49,12 @@
                                 <span class="badge">{{ $agrement->groupement_nom ?? 'Non spécifié' }}</span>
                             </td>
                             <td class="action-buttons">
-                                <!-- Bouton Vue -->
                                 <a href="{{ route('agrement.show', $agrement->agrement_id) }}" class="btn-action btn-view" title="Voir détails">
                                     <i class='bx bx-show-alt'></i>
                                 </a>
-
-                                <!-- Bouton Modifier -->
                                 <a href="{{ route('agrement.edit', $agrement->agrement_id) }}" class="btn-action btn-edit" title="Modifier">
                                     <i class='bx bx-edit-alt'></i>
                                 </a>
-
-                                <!-- Bouton Supprimer -->
                                 <form action="{{ route('agrement.destroy', $agrement->agrement_id) }}" method="POST" class="form-delete">
                                     @csrf
                                     @method('DELETE')
@@ -339,6 +338,29 @@
 .pagination-wrapper .page-link:hover {
     background-color: rgba(115, 103, 240, 0.1);
 }
+.search-container {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.search-input {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.8rem;
+    font-size: 16px;
+    border: 1px solid #7367F0;
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    border-color: #7367F0;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.2);
+}
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -361,4 +383,28 @@
 
 <!-- Include Boxicons CSS -->
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('searchInput');
+    const table = document.getElementById('agrementTable');
+    const rows = table.querySelectorAll('tbody tr');
+
+    // Fonction pour filtrer les lignes du tableau
+    searchInput.addEventListener('input', function () {
+        const searchValue = searchInput.value.toLowerCase();
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(' ');
+
+            if (rowText.includes(searchValue)) {
+                row.style.display = ''; // Affiche la ligne
+            } else {
+                row.style.display = 'none'; // Masque la ligne
+            }
+        });
+    });
+});
+</script>
 @endsection

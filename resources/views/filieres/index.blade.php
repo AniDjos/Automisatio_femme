@@ -17,9 +17,14 @@
         </a>
     </div>
 
+    <!-- Champ de recherche -->
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Rechercher dans le tableau..." class="search-input">
+    </div>
+
     <div class="elegant-card">
         <div class="table-container">
-            <table class="elegant-table">
+            <table class="elegant-table" id="filiereTable">
                 <thead>
                     <tr>
                         <th class="column-id">
@@ -336,6 +341,29 @@
 .elegant-pagination .page-link:hover {
     background-color: rgba(108, 92, 231, 0.1);
 }
+.search-container {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.search-input {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.8rem;
+    font-size: 16px;
+    border: 1px solid #6c5ce7;
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    border-color: #6c5ce7;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+}
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -358,4 +386,28 @@
 
 <!-- Include Boxicons CSS -->
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('searchInput');
+    const table = document.getElementById('filiereTable');
+    const rows = table.querySelectorAll('tbody tr');
+
+    // Fonction pour filtrer les lignes du tableau
+    searchInput.addEventListener('input', function () {
+        const searchValue = searchInput.value.toLowerCase();
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(' ');
+
+            if (rowText.includes(searchValue)) {
+                row.style.display = ''; // Affiche la ligne
+            } else {
+                row.style.display = 'none'; // Masque la ligne
+            }
+        });
+    });
+});
+</script>
 @endsection

@@ -37,4 +37,13 @@ class Appuis extends Model
         return $this->belongsTo(Structure::class, 'structure_id', 'structure_id');
     }
 
+    /**
+     * Relation avec le modèle User.
+     * Un appui appartient à un utilisateur.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'users_id', 'id');
+    }
+
 }

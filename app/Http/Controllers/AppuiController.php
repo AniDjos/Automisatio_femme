@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Groupement;
 use App\Models\Structure;
 use App\Models\Appuis;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use App\Models\User;
 
 class AppuiController extends Controller
 {
@@ -18,7 +21,10 @@ class AppuiController extends Controller
 
     public function store(Request $request)
     {
+        // Vérifier si l'utilisateur est connecté
+        $user = Auth::user();
 
+        // Validation des données
         $request->validate([
             'type_appuis' => 'required|string|max:255',
             'description' => 'required|string',
@@ -27,15 +33,31 @@ class AppuiController extends Controller
             'structure_id' => 'required|exists:structure,structure_id',
         ]);
 
-        Appuis::create($request->all());
+        // Ajouter l'identifiant de l'utilisateur connecté aux données
+        $data = $request->all();
+        $data['users_id'] = $user->id;
+
+        // Créer l'appui
+        Appuis::create($data);
 
         return redirect()->route('appuis.index')->with('success', 'Appui enregistré avec succès.');
     }
 
     public function index()
     {
-        $appuis = Appuis::with(['groupement','structure'])->paginate(7); 
-        return view('appuis.index', compact('appuis'));
+        // Vérifier si l'utilisateur est connecté
+        $user = Auth::user();
+
+        // Récupérer uniquement les appuis liés à cet utilisateur
+        $appuis = Appuis::with(['groupement', 'structure'])
+            ->where('users_id', $user->id)
+            ->orderBy('appuis_id', 'desc')
+            ->paginate(7);
+
+        // Récupérer les groupements liés à cet utilisateur
+        $groupements = Groupement::where('user_id', $user->id)->get();
+
+        return view('appuis.index', compact('appuis', 'groupements'));
     }
 
     public function edit($id)
@@ -50,6 +72,7 @@ class AppuiController extends Controller
         // Retourner la vue d'édition
         return view('appuis.edit', compact('appui', 'groupements', 'structures'));
     }
+
 
     public function update(Request $request, $id)
     {

@@ -30,7 +30,7 @@ class FiliereController extends Controller
 
     public function index()
     {
-        $filieres = DB::table('filiere')->paginate(7); // Récupère les filières avec pagination
+        $filieres = DB::table('filiere')->orderBy('filiere_id','desc')->paginate(7); // Récupère les filières avec pagination
         return view('filieres.index', compact('filieres'));
     }
 

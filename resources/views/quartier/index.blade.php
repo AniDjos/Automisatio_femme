@@ -16,9 +16,12 @@
         </a>
     </div>
 
-    <!-- Tableau des quartiers -->
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Rechercher dans le tableau..." class="search-input">
+    </div>
+
     <div class="table-responsive">
-        <table class="table">
+        <table class="table" id="quartierTable">
             <thead>
                 <tr>
                     <th><i class="fas fa-map-marker-alt th-icon"></i> ID</th>
@@ -36,12 +39,9 @@
                         <td>{{ $quartier->arrondissement->arrondissement_libelle }}</td>
                         <td>{{ $quartier->arrondissement->commune->commune_libelle }}</td>
                         <td class="actions-cell">
-                            <!-- Bouton Modifier -->
                             <a href="{{ route('quartier.edit', $quartier->quartier_id) }}" class="btn-action btn-edit" title="Modifier">
                                 <i class="fas fa-edit"></i>
                             </a>
-
-                            <!-- Bouton Supprimer -->
                             <form action="{{ route('quartier.destroy', $quartier->quartier_id) }}" method="POST" class="form-delete" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
@@ -53,7 +53,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="empty-state">
+                        <td colspan="5" class="empty-state">
                             <div class="empty-state-content">
                                 <i class="fas fa-search empty-icon"></i>
                                 <p>Aucun quartier trouvé.</p>
@@ -331,4 +331,28 @@
 
 <!-- N'oubliez pas d'inclure Font Awesome pour les icônes -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('searchInput');
+    const table = document.getElementById('quartierTable');
+    const rows = table.querySelectorAll('tbody tr');
+
+    // Fonction pour filtrer les lignes du tableau
+    searchInput.addEventListener('input', function () {
+        const searchValue = searchInput.value.toLowerCase();
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(' ');
+
+            if (rowText.includes(searchValue)) {
+                row.style.display = ''; // Affiche la ligne
+            } else {
+                row.style.display = 'none'; // Masque la ligne
+            }
+        });
+    });
+});
+</script>
 @endsection

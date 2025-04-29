@@ -14,6 +14,7 @@ use App\Models\Arrondissement;
 use App\Models\Structure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth; // Importer Auth pour récupérer l'utilisateur connecté
 
 class GroupementController extends Controller
 {
@@ -63,7 +64,7 @@ class GroupementController extends Controller
         }
 
         // Pagination des résultats
-        $groupements = $query->paginate(6); // Limite à 6 groupements par page
+        $groupements = $query->OrderBy('groupement_id','desc')->paginate(6); // Limite à 6 groupements par page
 
         // Retourne la vue avec les données
         return view('groupements.index', compact('groupements'));
@@ -139,7 +140,9 @@ class GroupementController extends Controller
                 'activite_secondaire_id' => $validatedData['activite_secondaire'] ?? null,
                 'filiere_id' => $validatedData['filiere'],
                 'date_creation' => $validatedData['date_creation'],
-                'statut' => False, 
+                'statut' => False,
+                'users_id' => Auth::id(), 
+
             ]);
     
             // Gestion de l'appui
@@ -150,6 +153,7 @@ class GroupementController extends Controller
                     'structure_id' => $validatedData['structure'],
                     'description' => $validatedData['description_appui'] ?? null,
                     'date_appuis' => $validatedData['annee_appui'] ?? null,
+                    'users_id' => Auth::id(), 
                 ]);
             }
     
@@ -160,6 +164,7 @@ class GroupementController extends Controller
                 'stat_equipement' => $validatedData['etat_equipement'],
                 'description_difficultie' => $validatedData['description_difficulte'] ?? null,
                 'description_besoin' => $validatedData['description_besoin'] ?? null,
+                'users_id' => Auth::id(), 
             ]);
     
             // Gestion du fichier
@@ -176,6 +181,7 @@ class GroupementController extends Controller
                 'reference' => $validatedData['reference'],
                 'document' => $filename,
                 'date_deliver' => $validatedData['annee_delivrance'],
+                'users_id' => Auth::id(), 
             ]);
     
             DB::commit();
@@ -447,5 +453,15 @@ class GroupementController extends Controller
         // Message de succès
         $message = $nouveauStatut ? 'Groupement activé avec succès.' : 'Groupement désactivé avec succès.';
         return redirect()->route('groupements.index')->with('success', $message);
+    }
+
+    public function dashboard($id)
+    {
+        // Récupérer le groupement par son ID avec ses relations
+        $groupement = Groupement::with(['localisation', 'agrement', 'activites', 'equipement', 'finances', 'appui'])
+            ->findOrFail($id);
+
+        // Retourner la vue avec les données du groupement
+        return view('dashboardEntete.pageModerateur', compact('groupement'));
     }
 }

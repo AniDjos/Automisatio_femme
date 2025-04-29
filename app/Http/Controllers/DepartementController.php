@@ -28,7 +28,7 @@ class DepartementController extends Controller
 
     public function index()
     {
-        $departements = Departement::paginate(7); // Récupère les départements avec pagination
+        $departements = Departement::orderBy('departement_id', 'desc')->paginate(7); // Récupère les départements avec pagination
         return view('departements.index', compact('departements'));
     }
 

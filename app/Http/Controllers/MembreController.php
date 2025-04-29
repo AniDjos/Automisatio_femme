@@ -47,7 +47,7 @@ class MembreController extends Controller
         }
 
         // Récupérer les membres avec pagination
-        $membres = $query->paginate(7);
+        $membres = $query->OrderBy('membre_id','desc')->paginate(7);
 
         // Vérifier si la requête est AJAX
         if ($request->ajax()) {

@@ -39,7 +39,9 @@ class QuartierController extends Controller
 
     public function index()
     {
-        $quartiers = Quartier::with(['arrondissement.commune'])->paginate(7); // Charge les relations pour arrondissement et commune
+        $quartiers = Quartier::with(['arrondissement.commune']) ->orderBy('quartier_id', 'desc')->paginate(7);
+                // Trier les résultats dans l'ordre décroissant par ID
+       
         return view('quartier.index', compact('quartiers'));
     }
 

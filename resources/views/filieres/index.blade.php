@@ -3,131 +3,359 @@
 @section('name', 'Liste des Filières')
 
 @section('content')
-<div class="containerer">
-    <h1 class="page-title">Liste des Filières</h1>
-
-    <!-- Bouton pour créer une nouvelle filière -->
-    <div class="create-button-container" style="margin: 1rem 0;">
-        <a href="{{ route('filiere.create') }}" class="btn-create">
-            <i class='bx bx-plus'></i> Ajouter une Filière
+<div class="elegant-container">
+    <div class="elegant-header">
+        <div class="header-content">
+            <h1 class="elegant-title">
+                <i class='bx bx-layer'></i> Liste des Filières
+            </h1>
+            <p class="elegant-subtitle">Gestion des parcours académiques</p>
+        </div>
+        
+        <a href="{{ route('filiere.create') }}" class="elegant-create-btn">
+            <i class='bx bx-plus'></i> Nouvelle Filière
         </a>
     </div>
 
-    <!-- Tableau des filières -->
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nom de la Filière</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($filieres as $filiere)
-                <tr>
-                    <td>{{ $filiere->filiere_id }}</td>
-                    <td>{{ $filiere->filiere_nom }}</td>
-                    <td>
-                        <!-- Bouton Modifier -->
-                        <a href="{{ route('filiere.edit', $filiere->filiere_id) }}" class="btn-action btn-edit" title="Modifier">
-                            <i class='bx bx-edit'></i>
-                        </a>
+    <div class="elegant-card">
+        <div class="table-container">
+            <table class="elegant-table">
+                <thead>
+                    <tr>
+                        <th class="column-id">
+                            <i class='bx bx-id-card'></i> ID
+                        </th>
+                        <th class="column-name">
+                            <i class='bx bx-bookmark'></i> Filière
+                        </th>
+                        <th class="column-actions">
+                            <i class='bx bx-cog'></i> Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($filieres as $filiere)
+                        <tr class="elegant-row">
+                            <td class="cell-id"><span class="badge">#{{ $filiere->filiere_id }}</span></td>
+                            <td class="cell-name">{{ $filiere->filiere_nom }}</td>
+                            <td class="cell-actions">
+                                <div class="action-buttons">
+                                    <a href="{{ route('filiere.edit', $filiere->filiere_id) }}" class="action-btn edit-btn" title="Modifier">
+                                        <i class='bx bx-edit-alt'></i>
+                                    </a>
+                                    
+                                    <form action="{{ route('filiere.destroy', $filiere->filiere_id) }}" method="POST" class="delete-form">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="action-btn delete-btn" title="Supprimer" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette filière ?')">
+                                            <i class='bx bx-trash'></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr class="empty-row">
+                            <td colspan="3">
+                                <div class="empty-state">
+                                    <i class='bx bx-folder-open'></i>
+                                    <span>Aucune filière disponible</span>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
-                        <!-- Bouton Supprimer -->
-                        <form action="{{ route('filiere.destroy', $filiere->filiere_id) }}" method="POST" class="form-delete" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn-action btn-delete" title="Supprimer" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette filière ?')">
-                                <i class='bx bx-trash'></i>
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="3">Aucune filière trouvée.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
-
-    <!-- Pagination -->
-    <div class="pagination-container">
-        {{ $filieres->links() }}
+        <div class="elegant-pagination">
+            {{ $filieres->links() }}
+        </div>
     </div>
 </div>
 
 <style>
-.containerer {
-    width: 1200px;
-    margin: 5rem 2rem 2rem 17rem;
-    padding: 2rem;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    font-family: 'Poppins', sans-serif;
+/* Variables CSS */
+:root {
+    --primary: #6c5ce7;
+    --primary-light: #a29bfe;
+    --primary-dark: #5649c0;
+    --secondary: #00cec9;
+    --danger: #ff7675;
+    --danger-dark: #e84343;
+    --light: #f8f9fa;
+    --light-gray: #f1f2f6;
+    --medium-gray: #dfe6e9;
+    --dark-gray: #636e72;
+    --dark: #2d3436;
+    --white: #ffffff;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 20px rgba(0,0,0,0.1);
+    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
 }
 
-.page-title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    color: #9b87f5;
+/* Base Styles */
+.elegant-container {
+    max-width: 1200px;
+    margin: 5rem 1rem 2rem 17rem;
+    padding: 0 1rem;
+    font-family: 'Inter', 'Poppins', sans-serif;
 }
 
-.table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 1.5rem;
+.elegant-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--medium-gray);
 }
 
-.table th, .table td {
-    border: 1px solid #ddd;
-    padding: 0.8rem;
-    text-align: left;
+.header-content {
+    display: flex;
+    flex-direction: column;
 }
 
-.table th {
-    background-color: #f4f4f4;
-    font-weight: bold;
+.elegant-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
-.btn-create, .btn-edit, .btn-delete {
+.elegant-title i {
+    color: var(--primary);
+    font-size: 1.8rem;
+}
+
+.elegant-subtitle {
+    font-size: 0.9rem;
+    color: var(--dark-gray);
+    margin: 0.25rem 0 0 0;
+    font-weight: 400;
+}
+
+.badge {
     display: inline-block;
-    padding: 0.8rem 1.5rem;
-    font-size: 14px;
-    font-weight: bold;
-    color: white;
-    border: none;
-    border-radius: 4px;
+    padding: 0.35rem 0.65rem;
+    background-color: var(--light-gray);
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--dark-gray);
+}
+
+.elegant-create-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary);
+    color: var(--white);
+    border-radius: var(--radius-sm);
     text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+}
+
+.elegant-create-btn:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.elegant-create-btn i {
+    font-size: 1.1rem;
+}
+
+.elegant-card {
+    background-color: var(--white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.elegant-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.elegant-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.95rem;
+}
+
+.elegant-table th {
+    background-color: var(--light);
+    color: var(--dark-gray);
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+    text-align: left;
+    border-bottom: 1px solid var(--medium-gray);
+}
+
+.elegant-table th i {
+    margin-right: 0.5rem;
+    font-size: 1.1rem;
+    vertical-align: middle;
+    color: var(--primary);
+}
+
+.elegant-table td {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--light-gray);
+    color: var(--dark);
+    vertical-align: middle;
+}
+
+.elegant-row:hover td {
+    background-color: rgba(108, 92, 231, 0.03);
+}
+
+.column-id {
+    width: 100px;
+}
+
+.column-name {
+    min-width: 250px;
+}
+
+.column-actions {
+    width: 120px;
+}
+
+.cell-id {
+    font-weight: 500;
+    color: var(--dark-gray);
+}
+
+.cell-name {
+    font-weight: 500;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-btn {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    color: var(--white);
+    transition: var(--transition);
+    text-decoration: none;
+    font-size: 1.1rem;
+    border: none;
     cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
-.btn-create {
-    background-color: #9b87f5;
+.edit-btn {
+    background-color: var(--primary);
 }
 
-.btn-create:hover {
-    background-color: #7a6ad8;
+.edit-btn:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
 }
 
-.btn-edit {
-    background-color:  #9b87f5;
+.delete-btn {
+    background-color: var(--danger);
 }
 
-.btn-edit:hover {
-    background-color:  #9b87f5;
+.delete-btn:hover {
+    background-color: var(--danger-dark);
+    transform: translateY(-2px);
 }
 
-.btn-delete {
-    background-color: #dc3545;
+.delete-form {
+    margin: 0;
 }
 
-.btn-delete:hover {
-    background-color: #c82333;
+.empty-row td {
+    padding: 2rem;
+    text-align: center;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--dark-gray);
+}
+
+.empty-state i {
+    font-size: 2rem;
+    color: var(--medium-gray);
+}
+
+.elegant-pagination {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid var(--light-gray);
+}
+
+.elegant-pagination .pagination {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.elegant-pagination .page-item.active .page-link {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.elegant-pagination .page-link {
+    color: var(--primary);
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 0.9rem;
+    transition: var(--transition);
+    border: 1px solid var(--medium-gray);
+}
+
+.elegant-pagination .page-link:hover {
+    background-color: rgba(108, 92, 231, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .elegant-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .elegant-table th, 
+    .elegant-table td {
+        padding: 1rem;
+    }
+    
+    .action-buttons {
+        justify-content: center;
+    }
 }
 </style>
+
+<!-- Include Boxicons CSS -->
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 @endsection

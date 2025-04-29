@@ -21,6 +21,7 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th><i class="fas fa-map-marker-alt th-icon"></i> ID</th>
                     <th><i class="fas fa-home th-icon"></i> Nom du Quartier</th>
                     <th><i class="fas fa-map-marker-alt th-icon"></i> Arrondissement</th>
                     <th><i class="fas fa-city th-icon"></i> Commune</th>
@@ -30,6 +31,7 @@
             <tbody>
                 @forelse($quartiers as $quartier)
                     <tr>
+                        <td><span class="badge">#{{ $quartier->quartier_id }}</span></td>
                         <td>{{ $quartier->quartier_libelle }}</td>
                         <td>{{ $quartier->arrondissement->arrondissement_libelle }}</td>
                         <td>{{ $quartier->arrondissement->commune->commune_libelle }}</td>
@@ -83,6 +85,15 @@
 
 .containerer:hover {
     box-shadow: 0 15px 35px rgba(155, 135, 245, 0.15);
+}
+
+.badge {
+    background-color: #E5DEFF;
+    color:rgb(104, 101, 110);
+    padding: 0.4rem 0.4rem;
+    border-radius: 100%;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .page-title {

@@ -18,14 +18,14 @@
         </a>
         <div class="search-box">
             <i class="bx bx-search"></i>
-            <input type="text" placeholder="Rechercher un CPS...">
+            <input type="text" id="searchInput" placeholder="Rechercher un CPS...">
         </div>
     </div>
 
     <!-- Tableau des CPS -->
     <div class="card">
         <div class="table-responsive">
-            <table class="elegant-table">
+            <table class="elegant-table" id="cpsTable">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -41,24 +41,16 @@
                     @forelse($cps as $item)
                         <tr>
                             <td><span class="badge">#{{ $item->cps_id }}</span></td>
-                            <td>
-                                <div class="entity-info">
-                                    <i class="bx bx-building-house"></i>
-                                    <span>{{ $item->cps_libelle }}</span>
-                                </div>
-                            </td>
+                            <td>{{ $item->cps_libelle }}</td>
                             <td>{{ $item->departement->departement_libelle ?? 'N/A' }}</td>
                             <td>{{ $item->commune->commune_libelle ?? 'N/A' }}</td>
                             <td>{{ $item->arrondissement->arrondissement_libelle ?? 'N/A' }}</td>
                             <td>{{ $item->quartier->quartier_libelle ?? 'N/A' }}</td>
                             <td>
                                 <div class="action-buttons">
-                                    <!-- Bouton Modifier -->
                                     <a href="{{ route('cps.edit', $item->cps_id) }}" class="btn-icon btn-edit" title="Modifier">
                                         <i class="bx bx-edit-alt"></i>
                                     </a>
-
-                                    <!-- Bouton Supprimer -->
                                     <form action="{{ route('cps.destroy', $item->cps_id) }}" method="POST" class="form-delete">
                                         @csrf
                                         @method('DELETE')
@@ -407,4 +399,29 @@ body {
     }
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('searchInput'); // Champ de recherche
+    const table = document.getElementById('cpsTable'); // Tableau
+    const rows = table.querySelectorAll('tbody tr'); // Lignes du tableau
+
+    // Écouteur d'événement pour la recherche
+    searchInput.addEventListener('input', function () {
+        const searchValue = searchInput.value.toLowerCase(); // Convertir la saisie en minuscule
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td'); // Toutes les cellules de la ligne
+            const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(' '); // Concatène le contenu des cellules
+
+            // Affiche ou masque la ligne en fonction de la correspondance
+            if (rowText.includes(searchValue)) {
+                row.style.display = ''; // Affiche la ligne
+            } else {
+                row.style.display = 'none'; // Masque la ligne
+            }
+        });
+    });
+});
+</script>
 @endsection

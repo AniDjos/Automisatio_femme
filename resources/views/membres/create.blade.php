@@ -118,6 +118,40 @@
             grid-template-columns: 1fr;
         }
     }
+
+    .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper .input-icon {
+    position: absolute;
+    left: 1rem;
+    font-size: 1.2rem;
+    color: #9b87f5;
+    pointer-events: none; /* Empêche l'icône d'interférer avec le clic */
+}
+
+.input-wrapper input,
+.input-wrapper select {
+    padding-left: 2.5rem; /* Ajoute un espace pour l'icône */
+    padding-right: 1rem;
+    width: 100%;
+    border: 1px solid #E5DEFF;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #F6F6F7;
+    transition: all 0.25s ease;
+}
+
+.input-wrapper input:focus,
+.input-wrapper select:focus {
+    border-color: #9b87f5;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(155, 135, 245, 0.2);
+    background-color: #ffffff;
+}
 </style>
 
 <div class="container-print">
@@ -126,38 +160,53 @@
         @csrf
         <div class="form-group">
             <label for="nom">Nom du Membre</label>
-            <input type="text" id="nom" name="nom_membre" placeholder="Entrez le nom du membre" required>
+            <div class="input-wrapper">
+                <i class="bx bx-user input-icon"></i>
+                <input type="text" id="nom" name="nom_membre" placeholder="Entrez le nom du membre" required>
+            </div>
         </div>
 
         <div class="form-group">
             <label for="prenom">Prénom du Membre</label>
-            <input type="text" id="prenom" name="prenom_membre" placeholder="Entrez le prénom du membre" required>
+            <div class="input-wrapper">
+                <i class="bx bx-user-circle input-icon"></i>
+                <input type="text" id="prenom" name="prenom_membre" placeholder="Entrez le prénom du membre" required>
+            </div>
         </div>
 
         <div class="form-group">
             <label for="role">Rôle</label>
-            <select id="role" name="role_stimule" required>
-                <option value="" disabled selected>Choisissez un rôle</option>
-                <option value="Présidente">Présidente</option>
-                <option value="Secrétaire">Secrétaire</option>
-                <option value="Personnel simple">Membre</option>
-                <option value="Personnel simple">Trésorière</option>
-            </select>
+            <div class="input-wrapper">
+                <i class="bx bx-briefcase input-icon"></i>
+                <select id="role" name="role_stimule" required>
+                    <option value="" disabled selected>Choisissez un rôle</option>
+                    <option value="Présidente">Présidente</option>
+                    <option value="Secrétaire">Secrétaire</option>
+                    <option value="Personnel simple">Membre</option>
+                    <option value="Personnel simple">Trésorière</option>
+                </select>
+            </div>
         </div>
 
         <div class="form-group">
             <label for="telephone">Téléphone</label>
-            <input type="text" id="telephone" name="telephone" placeholder="Entrez le numéro de téléphone" required>
+            <div class="input-wrapper">
+                <i class="bx bx-phone input-icon"></i>
+                <input type="text" id="telephone" name="telephone" placeholder="Entrez le numéro de téléphone" required>
+            </div>
         </div>
 
         <div class="form-group">
             <label for="groupement_id">Groupement</label>
-            <select id="groupement_id" name="groupement_id" required>
-                <option value="" disabled selected>Choisissez un groupement</option>
-                @foreach($groupements as $groupement)
-                    <option value="{{ $groupement->groupement_id }}">{{ $groupement->nom }}</option>
-                @endforeach
-            </select>
+            <div class="input-wrapper">
+                <i class="bx bx-group input-icon"></i>
+                <select id="groupement_id" name="groupement_id" required>
+                    <option value="" disabled selected>Choisissez un groupement</option>
+                    @foreach($groupements as $groupement)
+                        <option value="{{ $groupement->groupement_id }}">{{ $groupement->nom }}</option>
+                    @endforeach
+                </select>
+            </div>
         </div>
 
         <div class="form-group btn-submit-container">

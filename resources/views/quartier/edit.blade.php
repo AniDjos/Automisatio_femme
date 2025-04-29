@@ -12,93 +12,162 @@
         <!-- Champ Nom du Quartier -->
         <div class="form-group">
             <label for="nom_quartier">Nom du Quartier</label>
-            <input type="text" id="nom_quartier" name="nom_quartier" value="{{ $quartier->quartier_libelle }}" placeholder="Entrez le nom du quartier" required>
+            <div class="input-icon-wrapper">
+                <i class="input-icon fas fa-home"></i>
+                <input type="text" id="nom_quartier" name="nom_quartier" value="{{ $quartier->quartier_libelle }}" placeholder="Entrez le nom du quartier" required>
+            </div>
         </div>
 
         <!-- Champ Arrondissement -->
         <div class="form-group">
             <label for="arrondissement_id">Arrondissement</label>
-            <select id="arrondissement_id" name="arrondissement_id" required>
-                <option value="" disabled>Choisissez un arrondissement</option>
-                @foreach($arrondissements as $arrondissement)
-                    <option value="{{ $arrondissement->arrondissement_id }}" {{ $quartier->arrondissement_id == $arrondissement->arrondissement_id ? 'selected' : '' }}>
-                        {{ $arrondissement->arrondissement_libelle }}
-                    </option>
-                @endforeach
-            </select>
+            <div class="input-icon-wrapper">
+                <i class="input-icon fas fa-map-marker-alt"></i>
+                <select id="arrondissement_id" name="arrondissement_id" required>
+                    <option value="" disabled>Choisissez un arrondissement</option>
+                    @foreach($arrondissements as $arrondissement)
+                        <option value="{{ $arrondissement->arrondissement_id }}" {{ $quartier->arrondissement_id == $arrondissement->arrondissement_id ? 'selected' : '' }}>
+                            {{ $arrondissement->arrondissement_libelle }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
         </div>
 
-        <button type="submit" class="btn-submit">Enregistrer les modifications</button>
+        <button type="submit" class="btn-submit">
+            <i class="fas fa-save"></i>
+            Enregistrer les modifications
+        </button>
     </form>
 </div>
 
 <style>
 .container-form {
     max-width: 600px;
-    margin: 8rem auto;
-    padding: 2rem;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 5rem auto;
+    padding: 2.5rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     font-family: 'Poppins', sans-serif;
+    transition: all 0.3s ease;
+}
+
+@media (min-width: 1024px) {
+    .container-form {
+        margin: 8rem auto;
+    }
+}
+
+.container-form:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(155, 135, 245, 0.2);
 }
 
 .form-title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 1.5rem;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 2rem;
     text-align: center;
-    color: #9b87f5;
+    color: #7E69AB; /* Secondary Purple */
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #E5DEFF; /* Soft Purple */
+}
+
+.form-quartier {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .form-group label {
     display: block;
-    font-size: 14px;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-    color: #555;
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 0.6rem;
+    color: #403E43; /* Charcoal Gray */
+    letter-spacing: 0.02rem;
+}
+
+.input-icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 12px;
+    color: #9b87f5; /* Primary Purple */
+    font-size: 16px;
+    z-index: 1;
 }
 
 .form-group input,
 .form-group select {
     width: 100%;
-    padding: 0.8rem;
-    font-size: 14px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 0.9rem 1rem 0.9rem 2.5rem;
+    font-size: 15px;
+    border: 1px solid #E5DEFF; /* Soft Purple */
+    border-radius: 8px;
     box-sizing: border-box;
-    transition: border-color 0.3s ease;
+    transition: all 0.3s ease;
+    background-color: #F6F6F7; /* Light Gray */
 }
 
 .form-group input:focus,
 .form-group select:focus {
-    border-color: #9b87f5;
+    border-color: #9b87f5; /* Primary Purple */
     outline: none;
+    box-shadow: 0 0 0 3px rgba(155, 135, 245, 0.2);
+    background-color: #ffffff;
 }
 
 .btn-submit {
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
     width: 100%;
-    padding: 0.8rem;
+    padding: 1rem;
     font-size: 16px;
-    font-weight: bold;
+    font-weight: 600;
     color: white;
-    background-color: #9b87f5;
-    border: none;
-    border-radius: 4px;
+    background-color: #9b87f5; /* Primary Purple */
+    border: 2px solid #9b87f5; /* Primary Purple */
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 1rem;
 }
 
-.btn-next:hover,
-    .btn-submit:hover {
-        color: #9b87f5;
-        background-color: #fff;
-        border: 1px solid #9b87f5;
+.btn-submit:hover {
+    background-color: #fff;
+    color: #9b87f5;
+    border-color: #9b87f5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(155, 135, 245, 0.3);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(155, 135, 245, 0.3);
+}
+
+@media (max-width: 768px) {
+    .container-form {
+        margin: 2rem 1rem;
+        padding: 1.5rem;
     }
+}
 </style>
+
+<!-- N'oubliez pas d'inclure Font Awesome pour les icônes -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 @endsection

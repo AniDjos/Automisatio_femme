@@ -19,7 +19,7 @@
             <form action="{{ route('groupements.index') }}" method="GET" class="recherche-groupement">
                 <div class="search-wrapper">
                     <i class="fas fa-search search-icon"></i>
-                    <input type="text" name="search" value="{{ request('search') }}"
+                    <input type="text" name="search" id="searchGroupement" value="{{ request('search') }}"
                         placeholder="Rechercher un groupement par nom, activité, lieu, effectif, localisation...">
                 </div>
 
@@ -29,7 +29,8 @@
                         <select name="departement" id="departement" class="filter-select">
                             <option value="">-- Sélectionner un département --</option>
                             @foreach ($departements as $departement)
-                                <option value="{{ $departement->departement_id }}">{{ $departement->departement_libelle }}</option>
+                                <option value="{{ $departement->departement_id }}">{{ $departement->departement_libelle }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -63,7 +64,7 @@
         <!-- Liste des groupements -->
         <div class="container-prin">
             @forelse($groupements as $groupement)
-                <div class="container-groupement">
+                <div class="container-groupement" data-name="{{ strtolower($groupement->groupement_nom) }}">
                     <div class="header-groupement">
                         <!-- Génération de l'acronyme -->
                         @php
@@ -104,10 +105,12 @@
                         <p class="info-item" data-tooltip="État actuel du groupement">
                             <i class="fas fa-user"></i>
                             <span>Etat:
-                                @if ($groupement->statut)
+                                @if ($groupement->rejet)
+                                    <span class="badge badge-danger">Rejeté</span>
+                                @elseif ($groupement->statut)
                                     <span class="badge badge-success">Activé</span>
                                 @else
-                                    <span class="badge badge-danger">Désactivé</span>
+                                    <span class="badge badge-warning">Désactivé</span>
                                 @endif
                             </span>
                         </p>
@@ -125,10 +128,6 @@
                         <i class="fas fa-search"></i>
                     </div>
                     <p>Aucun groupement trouvé.</p>
-                    <a href="{{ route('groupements.create') }}" class="btn-create">
-                        <i class="fas fa-plus"></i>
-                        Créer un groupement
-                    </a>
                 </div>
             @endforelse
         </div>
@@ -140,6 +139,36 @@
     </main>
 
     <!-- JavaScript pour Mobile Menu et animations -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchGroupement');
+            const groupements = document.querySelectorAll('.container-groupement');
+
+            // Fonction pour filtrer les groupements
+            function filterGroupements(query) {
+                const lowerCaseQuery = query.toLowerCase();
+
+                groupements.forEach(groupement => {
+                    const groupementName = groupement.getAttribute('data-name');
+
+                    // Vérifier si le nom du groupement correspond à la recherche
+                    if (groupementName.includes(lowerCaseQuery)) {
+                        groupement.style.display = ''; // Afficher le groupement
+                    } else {
+                        groupement.style.display = 'none'; // Masquer le groupement
+                    }
+                });
+            }
+
+            // Écouteur d'événement sur l'input de recherche
+            searchInput.addEventListener('input', function() {
+                const query = this.value.trim();
+                filterGroupements(query);
+            });
+        });
+    </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Gestion du menu mobile
@@ -227,7 +256,7 @@
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const departementSelect = document.getElementById('departement');
             const communeSelect = document.getElementById('commune');
             const arrondissementSelect = document.getElementById('arrondissement');
@@ -239,7 +268,7 @@
             }
 
             // Charger les communes en fonction du département sélectionné
-            departementSelect.addEventListener('change', function () {
+            departementSelect.addEventListener('change', function() {
                 const departementId = this.value;
                 clearSelect(communeSelect);
                 clearSelect(arrondissementSelect);
@@ -261,7 +290,7 @@
             });
 
             // Charger les arrondissements en fonction de la commune sélectionnée
-            communeSelect.addEventListener('change', function () {
+            communeSelect.addEventListener('change', function() {
                 const communeId = this.value;
                 clearSelect(arrondissementSelect);
                 clearSelect(quartierSelect);
@@ -277,12 +306,13 @@
                                 arrondissementSelect.appendChild(option);
                             });
                         })
-                        .catch(error => console.error('Erreur lors du chargement des arrondissements:', error));
+                        .catch(error => console.error('Erreur lors du chargement des arrondissements:',
+                            error));
                 }
             });
 
             // Charger les quartiers en fonction de l'arrondissement sélectionné
-            arrondissementSelect.addEventListener('change', function () {
+            arrondissementSelect.addEventListener('change', function() {
                 const arrondissementId = this.value;
                 clearSelect(quartierSelect);
 
@@ -752,6 +782,12 @@
             flex-grow: 1;
         }
 
+        .badge-warning {
+            background-color: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
         .info-item {
             display: flex;
             align-items: flex-start;
@@ -874,7 +910,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, var(--primary-light), rgba(155, 135, 245, 0.05));
+            background: linear-gradient(135deg, #9b87f5, #7a6ad8);
             border-radius: 50%;
             margin-bottom: 0.5rem;
         }

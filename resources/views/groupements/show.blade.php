@@ -45,6 +45,14 @@
                 <button type="submit" class="dropdown-item">Activer</button>
                 @endif
             </form>
+
+            <!-- Rejeter -->
+            <form action="{{ route('groupements.reject', $groupement->groupement_id) }}" method="POST" style="display:inline;">
+                @csrf
+                @method('PUT')
+                <button type="submit" class="dropdown-item"
+                    onclick="return confirm('Êtes-vous sûr de vouloir rejeter ce groupement ?')">Rejeter</button>
+            </form>
         </div>
     </div>
 </div>

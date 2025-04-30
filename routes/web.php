@@ -74,11 +74,13 @@ Route::put('/groupements/{id}/toggle-status', [GroupementController::class, 'tog
 
 Route::get('/groupement/{id}/dashboard', [GroupementController::class, 'dashboard'])->name('groupement.dashboard');
 
-Route::get('/communes/{departement}', [GroupementController::class, 'getCommunes']);
+Route::get('/communes/{departement}', [GroupementController::class, 'getCommune']);
 
-Route::get('/arrondissements/{commune}', [GroupementController::class, 'getArrondissements']);
+Route::get('/arrondissements/{commune}', [GroupementController::class, 'getArrondissement']);
 
-Route::get('/quartiers/{arrondissement}', [GroupementController::class, 'getQuartiers']);
+Route::put('/groupements/{id}/reject', [GroupementController::class, 'reject'])->name('groupements.reject');
+
+Route::get('/quartiers/{arrondissement}', [GroupementController::class, 'getQuartier']);
 /**
  * * Routes pour la gestion des membres
  * * Ces routes permettent de créer, afficher, modifier et supprimer des membres.

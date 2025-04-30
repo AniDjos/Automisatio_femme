@@ -51,6 +51,7 @@ class GroupementController extends Controller
                 'groupement.nom as groupement_nom',
                 'groupement.effectif',
                 'groupement.statut',
+                'groupement.rejet',
                 'groupement.date_creation',
                 'departement.departement_libelle as departement_nom', 
                 'commune.commune_libelle as commune_nom',
@@ -93,7 +94,7 @@ class GroupementController extends Controller
         }
 
         // Pagination des résultats
-        $groupements = $query->orderBy('groupement_id', 'desc')->paginate(6);
+        $groupements = $query->orderBy('groupement_id', 'desc')->paginate(3);
 
         // Récupérer les données pour les champs de sélection
         $departements = Departement::all();
@@ -526,5 +527,18 @@ class GroupementController extends Controller
 
         // Retourner la vue avec les données du groupement
         return view('dashboardEntete.pageModerateur', compact('groupement'));
+    }
+    public function reject($id)
+    {
+        $groupement = Groupement::findOrFail($id);
+    
+        // Mettre à jour la colonne 'rejet' à 1
+        $groupement->rejet = 1;
+        $groupement->save();
+    
+        // Ajouter une notification dans la session
+        session()->flash('notification', 'Le groupement a été rejeté avec succès.');
+    
+        return redirect()->route('groupements.index');
     }
 }

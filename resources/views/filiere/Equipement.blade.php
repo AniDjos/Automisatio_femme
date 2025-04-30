@@ -3,6 +3,7 @@
 @section('title', 'Enregistrer un Équipement')
 
 @section('content')
+
 <div class="elegant-form-container">
     <div class="form-header">
         <h1 class="form-title">

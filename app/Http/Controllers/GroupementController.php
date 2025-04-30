@@ -26,14 +26,18 @@ class GroupementController extends Controller
     {
         // Récupérer l'utilisateur connecté
         $user = Auth::user();
-    
+
         // Vérifier le rôle de l'utilisateur
         if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
             return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
         }
-    
+
         $search = $request->input('search');
-    
+        $departement = $request->input('departement');
+        $commune = $request->input('commune');
+        $arrondissement = $request->input('arrondissement');
+        $quartier = $request->input('quartier');
+
         // Construire la requête de recherche
         $query = DB::table('groupement')
             ->join('departement', 'groupement.departement_id', '=', 'departement.departement_id') 
@@ -55,7 +59,7 @@ class GroupementController extends Controller
                 'activite_principale.activite as activite_principale_nom', 
                 'activite_secondaire.activite as activite_secondaire_nom'
             );
-    
+
         // Appliquer la recherche si un terme est fourni
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -70,12 +74,35 @@ class GroupementController extends Controller
                   ->orWhere('groupement.statut', '=', $search); 
             });
         }
-    
+
+        // Appliquer les filtres par localisation
+        if ($departement) {
+            $query->where('groupement.departement_id', $departement);
+        }
+
+        if ($commune) {
+            $query->where('groupement.commune', $commune);
+        }
+
+        if ($arrondissement) {
+            $query->where('groupement.arrondissement', $arrondissement);
+        }
+
+        if ($quartier) {
+            $query->where('groupement.quartier', $quartier);
+        }
+
         // Pagination des résultats
         $groupements = $query->orderBy('groupement_id', 'desc')->paginate(6);
-    
+
+        // Récupérer les données pour les champs de sélection
+        $departements = Departement::all();
+        $communes = Commune::all();
+        $arrondissements = Arrondissement::all();
+        $quartiers = Quartier::all();
+
         // Retourner la vue avec les données
-        return view('groupements.index', compact('groupements'));
+        return view('groupements.index', compact('groupements', 'departements', 'communes', 'arrondissements', 'quartiers'));
     }
 
     /**
@@ -373,6 +400,24 @@ class GroupementController extends Controller
         $quartiers = Quartier::where('arrondissement_id', $request->arrondissement_id)->get();
 
         // Retourne les données au format JSON
+        return response()->json($quartiers);
+    }
+
+    public function getCommune($departementId)
+{
+    $communes = Commune::where('departement_id', $departementId)->get();
+    return response()->json($communes);
+}
+
+    public function getArrondissement($communeId)
+    {
+        $arrondissements = Arrondissement::where('commune_id', $communeId)->get();
+        return response()->json($arrondissements);
+    }
+
+    public function getQuartier($arrondissementId)
+    {
+        $quartiers = Quartier::where('arrondissement_id', $arrondissementId)->get();
         return response()->json($quartiers);
     }
     

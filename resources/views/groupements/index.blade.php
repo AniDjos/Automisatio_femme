@@ -9,7 +9,7 @@
         <div class="btn-ajout">
             <a href="{{ route('groupements.create') }}" class="btn">
                 <i class="fas fa-plus"></i>
-                <span>Nouveau groupement Anicet</span>
+                <span>Nouveau groupement</span>
             </a>
         </div>
     </div>

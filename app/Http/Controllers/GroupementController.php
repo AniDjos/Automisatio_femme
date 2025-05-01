@@ -22,6 +22,36 @@ class GroupementController extends Controller
      * Affiche la liste des groupements avec recherche et pagination.
      */
    
+     public function indexe()
+     {
+         // Construire la requête de recherche
+         $query = DB::table('groupement')
+         ->join('departement', 'groupement.departement_id', '=', 'departement.departement_id') 
+         ->leftJoin('commune', 'commune.commune_id', '=', 'groupement.commune') 
+         ->leftJoin('arrondissement', 'arrondissement.arrondissement_id', '=', 'groupement.arrondissement')
+         ->leftJoin('quartier', 'quartier.quartier_id', '=', 'groupement.quartier')
+         ->leftJoin('activite as activite_principale', 'activite_principale.activite_id', '=', 'groupement.activite_principale_id')
+         ->leftJoin('activite as activite_secondaire', 'activite_secondaire.activite_id', '=', 'groupement.activite_secondaire_id') 
+         ->select(
+             'groupement.groupement_id',
+             'groupement.nom as groupement_nom',
+             'groupement.effectif',
+             'groupement.statut',
+             'groupement.rejet',
+             'groupement.date_creation',
+             'departement.departement_libelle as departement_nom', 
+             'commune.commune_libelle as commune_nom',
+             'arrondissement.arrondissement_libelle as arrondissement_nom',
+             'quartier.quartier_libelle as quartier_nom', 
+             'activite_principale.activite as activite_principale_nom', 
+             'activite_secondaire.activite as activite_secondaire_nom'
+         );
+         $groupements = $query->where('statut', 1)->orderBy('groupement_id', 'desc')->paginate(3);
+ 
+         // Retourner la vue avec les groupements
+         return view('home.groupement', compact('groupements'));
+     }
+
     public function index(Request $request)
     {
         // Récupérer l'utilisateur connecté
@@ -336,13 +366,13 @@ class GroupementController extends Controller
                 ]);
             }
 
-            // Gestion du fichier
-            $filename = null;
-            if ($request->hasFile('agrement')) {
-                $file = $request->file('agrement');
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('agrements'), $filename);
-            }
+            // // Gestion du fichier
+            // $filename = null;
+            // if ($request->hasFile('agrement')) {
+            //     $file = $request->file('agrement');
+            //     $filename = time() . '_' . $file->getClientOriginalName();
+            //     $file->move(public_path('agrements'), $filename);
+            // }
 
             // Mise à jour de l'agrément
             $agrement = Agrement::where('groupement_id', $groupement->groupement_id)->first();
@@ -350,7 +380,7 @@ class GroupementController extends Controller
                 $agrement->update([
                     'structure' => $validatedData['structure_delivrance'],
                     'reference' => $validatedData['reference'],
-                    'document' => $filename ?? $agrement->document,
+                    // 'document' => $filename ?? $agrement->document,
                     'date_deliver' => $validatedData['annee_delivrance'],
                 ]);
             } else {
@@ -358,7 +388,7 @@ class GroupementController extends Controller
                     'groupement_id' => $groupement->groupement_id,
                     'structure' => $validatedData['structure_delivrance'],
                     'reference' => $validatedData['reference'],
-                    'document' => $filename,
+                    // 'document' => $filename,
                     'date_deliver' => $validatedData['annee_delivrance'],
                 ]);
             }
@@ -480,9 +510,69 @@ class GroupementController extends Controller
         return view('groupements.show', compact('groupement'));
     }
 
+    public function shows($id)
+    {
+        // Construire la requête pour récupérer les détails du groupement
+        $groupement = DB::table('groupement')
+            ->join('departement', 'groupement.departement_id', '=', 'departement.departement_id') 
+            ->leftJoin('commune', 'commune.commune_id', '=', 'groupement.commune') 
+            ->leftJoin('arrondissement', 'arrondissement.arrondissement_id', '=', 'groupement.arrondissement') 
+            ->leftJoin('quartier', 'quartier.quartier_id', '=', 'groupement.quartier') 
+            ->leftJoin('activite as activite_principale', 'activite_principale.activite_id', '=', 'groupement.activite_principale_id') 
+            ->leftJoin('activite as activite_secondaire', 'activite_secondaire.activite_id', '=', 'groupement.activite_secondaire_id')
+            ->leftJoin('equipement', 'equipement.groupement_id', '=', 'groupement.groupement_id') 
+            ->leftJoin('appuis', 'appuis.groupement_id', '=', 'groupement.groupement_id')
+            ->leftJoin('filiere', 'filiere.filiere_id', '=', 'groupement.filiere_id')
+            ->leftJoin('agrement', 'agrement.groupement_id', '=', 'groupement.groupement_id') 
+            ->leftJoin('structure', 'agrement.structure', '=', 'structure.structure_id')
+            ->select(
+                'groupement.groupement_id',
+                'groupement.nom as groupement_nom',
+                'groupement.effectif',
+                'groupement.statut',
+                'filiere.filiere_nom',
+                'groupement.revenu_mens',
+                'groupement.benefice_mens',
+                'groupement.depense_mens',
+                'groupement.date_creation',
+                'departement.departement_libelle as departement_nom', 
+                'commune.commune_libelle as commune_nom', 
+                'arrondissement.arrondissement_libelle as arrondissement_nom', 
+                'quartier.quartier_libelle as quartier_nom', 
+                'activite_principale.activite as activite_principale_nom', 
+                'activite_secondaire.activite as activite_secondaire_nom',
+                'equipement.equipment_libelle as equipement_nom', 
+                'equipement.stat_equipement as equipement_etat', 
+                'appuis.type_appuis as appui_type',
+                'appuis.description as appui_description',
+                'appuis.date_appuis as appui_annee', 
+                'equipement.equipment_libelle as equipement',  
+                'equipement.stat_equipement as etat_equipement' ,
+                'equipement.description_difficultie as description_difficultie',
+                'equipement.description_besoin as description_besoin',
+                'appuis.date_appuis as appui_date', 
+                'structure.structure',
+                'agrement.reference as agrement_reference', 
+                'agrement.date_deliver as agrement_date' 
+            )
+            ->where('groupement.groupement_id', '=', $id) 
+            ->first(); 
+    
+        // Vérifier si le groupement existe
+        if (!$groupement) {
+            abort(404, 'Groupement non trouvé.');
+        }
+    
+        // Retourner la vue avec les détails du groupement
+        return view('home.show', compact('groupement'));
+    }
+
     public function edit($id)
     {
+        // Récupérer le groupement par son ID
         $groupement = Groupement::findOrFail($id);
+    
+        // Récupérer les données des tables liées
         $departements = Departement::all();
         $communes = Commune::all();
         $arrondissements = Arrondissement::all();
@@ -490,13 +580,27 @@ class GroupementController extends Controller
         $activites = Activite::all();
         $filieres = Filiere::all();
         $structures = Structure::all();
-        $agrements = Agrement::all();
-        $equipements = Equipement::all();
-        $appuis = Appuis::all();
-
-        return view('groupements.edit', compact('groupement','agrements' ,'departements', 'communes', 'arrondissements', 'quartiers', 'activites', 'filieres','structures', 'equipements', 'appuis'));
+    
+        // Récupérer les données spécifiques liées au groupement
+        $agrements = Agrement::where('groupement_id', $id)->get();
+        $equipements = Equipement::where('groupement_id', $id)->get();
+        $appuis = Appuis::where('groupement_id', $id)->get();
+    
+        // Retourner la vue avec toutes les données nécessaires
+        return view('groupements.edit', compact(
+            'groupement',
+            'agrements',
+            'departements',
+            'communes',
+            'arrondissements',
+            'quartiers',
+            'activites',
+            'filieres',
+            'structures',
+            'equipements',
+            'appuis'
+        ));
     }
-
     public function toggleStatus($id)
     {
         // Récupérer l'utilisateur

@@ -27,6 +27,9 @@
         </div>
 
         <button type="submit" class="btn-submit">Se connecter</button>
+        <div class="retour">
+        <a href="{{ route('App_acceuil') }}">retour</a>
+        </div>
     </form>
 </div>
 
@@ -44,6 +47,17 @@
 .inscrire a{
     color: blue;
     text-decoration: none;
+}
+
+.retour{
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 14px;
+    color: #737373;
+    padding: 0.5rem; 
+    border-radius: 4px;
+    background-color: #f0f0f0;
+    transition: background-color 0.3s ease;
 }
 
 .form-title {

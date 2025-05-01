@@ -11,7 +11,10 @@
             <p class="dashboard-subtitle">Détails du groupement</p>
         </div>
         
-        <div class="header-actions">
+
+    </div>
+
+    <div class="header-actions">
             <div class="action-dropdown">
                 <button class="action-button">
                     <i class="fas fa-ellipsis-v"></i>
@@ -20,40 +23,9 @@
                     <a href="{{ route('groupements.index') }}" class="dropdown-item">
                         <i class="fas fa-list"></i> Retour à la liste
                     </a>
-                    <a href="{{ route('groupements.edit', $groupement->groupement_id) }}" class="dropdown-item">
-                        <i class="fas fa-edit"></i> Modifier
-                    </a>
-                    <form action="{{ route('groupements.destroy', $groupement->groupement_id) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="dropdown-item danger" onclick="return confirm('Êtes-vous sûr ?')">
-                            <i class="fas fa-trash"></i> Supprimer
-                        </button>
-                    </form>
-                    <form action="{{ route('groupements.toggleStatus', $groupement->groupement_id) }}" method="POST">
-                        @csrf
-                        @method('PUT')
-                        @if ($groupement->statut)
-                            <button type="submit" class="dropdown-item warning">
-                                <i class="fas fa-toggle-off"></i> Désactiver
-                            </button>
-                        @else
-                            <button type="submit" class="dropdown-item success">
-                                <i class="fas fa-toggle-on"></i> Activer
-                            </button>
-                        @endif
-                    </form>
-                    <form action="{{ route('groupements.reject', $groupement->groupement_id) }}" method="POST">
-                        @csrf
-                        @method('PUT')
-                        <button type="submit" class="dropdown-item danger" onclick="return confirm('Êtes-vous sûr ?')">
-                            <i class="fas fa-ban"></i> Rejeter
-                        </button>
-                    </form>
                 </div>
             </div>
         </div>
-    </div>
 
     <!-- Contenu principal -->
     <div class="dashboard-content">
@@ -123,107 +95,14 @@
                 </div>
             </div>
         </div>
-
-        <!-- Section Appuis et Agréménts -->
-        <div class="dual-card-container">
-            <!-- Carte Appuis -->
-            <div class="info-card small-card">
-                <div class="card-header">
-                    <h2><i class="fas fa-hands-helping"></i> Appuis</h2>
-                </div>
-                <div class="card-body">
-                    @if ($groupement->appui_type)
-                        <div class="info-item">
-                            <span class="info-label">Type</span>
-                            <span class="info-value">{{ $groupement->appui_type }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Description</span>
-                            <span class="info-value">{{ $groupement->appui_description }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Date</span>
-                            <span class="info-value">{{ $groupement->appui_date }}</span>
-                        </div>
-                    @else
-                        <div class="empty-state">
-                            <i class="fas fa-inbox"></i>
-                            <p>Aucun appui enregistré</p>
-                        </div>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Carte Agréménts -->
-            <div class="info-card small-card">
-                <div class="card-header">
-                    <h2><i class="fas fa-file-certificate"></i> Agréménts</h2>
-                </div>
-                <div class="card-body">
-                    @if ($groupement->structure)
-                        <div class="info-item">
-                            <span class="info-label">Structure</span>
-                            <span class="info-value">{{ $groupement->structure }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Référence</span>
-                            <span class="info-value">{{ $groupement->agrement_reference }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Date délivrance</span>
-                            <span class="info-value">{{ $groupement->agrement_date }}</span>
-                        </div>
-                    @else
-                        <div class="empty-state">
-                            <i class="fas fa-inbox"></i>
-                            <p>Aucun agrément enregistré</p>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-
-        <!-- Section Equipement -->
-        <div class="info-card">
-            <div class="card-header">
-                <h2><i class="fas fa-tools"></i> Équipement</h2>
-            </div>
-            <div class="card-body">
-                @if ($groupement->equipement)
-                    <div class="info-item">
-                        <span class="info-label">Nom</span>
-                        <span class="info-value">{{ $groupement->equipement }}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">État</span>
-                        <span class="info-value status-badge {{ strtolower($groupement->etat_equipement) }}">
-                            {{ $groupement->etat_equipement }}
-                        </span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Difficultés</span>
-                        <span class="info-value">{{ $groupement->description_difficultie }}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Besoins</span>
-                        <span class="info-value">{{ $groupement->description_besoin }}</span>
-                    </div>
-                @else
-                    <div class="empty-state">
-                        <i class="fas fa-inbox"></i>
-                        <p>Aucun équipement enregistré</p>
-                    </div>
-                @endif
-            </div>
-        </div>
     </div>
 </div>
 
 <!-- Styles -->
 <style>
 :root {
-    --primary-color: #6c5ce7;
-    --primary-light: #a29bfe;
+    --primary-color: #c3bd35;
+    --primary-light: #c2bd35;
     --secondary-color: #00cec9;
     --success-color: #00b894;
     --warning-color: #fdcb6e;
@@ -243,8 +122,7 @@ body {
 
 .dashboard-container {
     max-width: 1200px;
-    margin: 5rem 1rem 1rem 17rem;
-    padding: 0 1rem;
+    margin: 5rem auto 0rem;
 }
 
 .dashboard-header {

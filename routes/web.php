@@ -36,7 +36,9 @@ Route::get('/contact', [\App\Http\Controllers\AcceuilController::class,'Contact'
 
 Route::get('/prestation', [\App\Http\Controllers\AcceuilController::class,'Prestation'])->name('App_prestation');
 
-Route::get('/groupement', [\App\Http\Controllers\AcceuilController::class,'Groupement'])->name('App_groupement');
+Route::get('/groupement', [\App\Http\Controllers\GroupementController::class,'indexe'])->name('App_groupement');
+
+Route::get('/groupement/{id}', [\App\Http\Controllers\GroupementController::class,'shows'])->name('App_groupement_shows');
 
 /**
  * * Routes pour la gestion de l'authentification

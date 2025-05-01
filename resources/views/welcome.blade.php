@@ -22,7 +22,7 @@
 
 <body>
 <!-- Navigation conditionnelle -->
-@if (request()->routeIs('App_acceuil', 'App_groupement', 'App_prestation', 'App_contact'))
+@if (request()->routeIs('App_acceuil', 'App_groupement', 'App_prestation', 'App_contact','App_groupement_shows'))
     @include('home.navba')
 @elseif (!request()->routeIs('utilisateurs.login'))
     @include('dashboardEntete.entete')
@@ -32,7 +32,7 @@
     @yield('content')
 </main>
 
-@if (request()->routeIs('App_acceuil', 'App_groupement', 'App_prestation', 'App_contact'))
+@if (request()->routeIs('App_acceuil', 'App_groupement', 'App_prestation', 'App_contact', 'App_groupement_shows'))
     @include('home.footer')
 @endif
 

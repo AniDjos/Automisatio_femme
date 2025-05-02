@@ -11,21 +11,20 @@
             <p class="dashboard-subtitle">Détails du groupement</p>
         </div>
         
-
-    </div>
-
-    <div class="header-actions">
+        <div class="header-actions">
             <div class="action-dropdown">
                 <button class="action-button">
                     <i class="fas fa-ellipsis-v"></i>
                 </button>
                 <div class="dropdown-content">
-                    <a href="{{ route('groupements.index') }}" class="dropdown-item">
+                    <a href="{{ route('App_groupement') }}" class="dropdown-item">
                         <i class="fas fa-list"></i> Retour à la liste
                     </a>
                 </div>
             </div>
         </div>
+
+    </div>
 
     <!-- Contenu principal -->
     <div class="dashboard-content">
@@ -121,8 +120,8 @@ body {
 }
 
 .dashboard-container {
-    max-width: 1200px;
-    margin: 5rem auto 0rem;
+    width: 1200px;
+    margin: 7rem 1rem 2rem 10rem;
 }
 
 .dashboard-header {
@@ -140,9 +139,10 @@ body {
 
 .dashboard-title {
     font-size: 2rem;
-    color: var(--primary-color);
+    color: black;
     margin: 0;
     font-weight: 700;
+    padding-top: 2rem
 }
 
 .dashboard-subtitle {

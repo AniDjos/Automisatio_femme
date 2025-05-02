@@ -11,7 +11,7 @@
 
     <!-- Bouton pour créer un nouveau quartier -->
     <div class="create-button-container">
-        <a href="{{ route('quartier.create') }}" class="btn-create">
+        <a href="{{ route('quartiers.create') }}" class="btn-create">
             <i class="fas fa-plus-circle"></i> Ajouter un Quartier
         </a>
     </div>

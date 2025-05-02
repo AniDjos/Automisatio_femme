@@ -115,7 +115,7 @@ Route::get('/membres/{id}', [MembreController::class, 'show'])->name('membres.sh
   
 Route::post('/quartiers', [QuartierController::class, 'store'])->name('quartier.store');
 
-Route::get('/quartiers/nouveau', [QuartierController::class, 'create'])->name('quartier.create')->middleware('auth');
+Route::get('/quartiers/create', [QuartierController::class, 'create'])->name('quartiers.create')->middleware('auth');
 
 Route::get('/quartiers', [QuartierController::class, 'index'])->name('quartier.index')->middleware('auth');
 

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Quartier;
 use App\Models\Arrondissement;
 use App\Models\Commune;
+
 use Illuminate\Support\Facades\Auth; // Importer Auth pour récupérer l'utilisateur connecté
 use Illuminate\Support\Facades\DB;
 
@@ -13,15 +14,18 @@ class QuartierController extends Controller
 {
     public function create()
     {
-                        // Récupérer l'utilisateur connecté
-                        $user = Auth::user();
-    
-                        // Vérifier le rôle de l'utilisateur
-                        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
-                            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
-                        }
-        $arrondissements = Arrondissement::all(); 
-        return view('quartier.create', compact('arrondissements'));
+        $user = Auth::user();
+
+        // Vérifiez si l'utilisateur est autorisé
+        if ($user->role !== 'admin' && $user->role !== 'gestionnaire') {
+            return redirect()->route('login')->with('error', 'Vous n\'êtes pas autorisé à accéder à cette page.');
+        }
+
+        // Récupérez les données nécessaires pour la vue
+        $arrondissements = Arrondissement::all();
+
+        // Retournez la vue
+        return view('quartier.creation', compact('arrondissements'));
     }
 
     public function store(Request $request)
